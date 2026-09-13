@@ -2,19 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1"
->
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#080808">
 <meta name="referrer" content="no-referrer">
-
-<meta
-  http-equiv="Content-Security-Policy"
-  content="default-src 'self' data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self'; object-src 'none'; base-uri 'none'"
->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self'; object-src 'none'; base-uri 'none'">
 
 <title>Mini Vestaboard</title>
 
@@ -26,78 +17,9 @@
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
+  color: #eee;
   background: #080808;
-  color: #eeeeee;
 }
-
-button,
-input,
-select {
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-  border: 0;
-  border-radius: 5px;
-  background: #efbe64;
-  color: #17130b;
-  padding: 12px 18px;
-  font-weight: bold;
-}
-
-button.secondary {
-  background: #303336;
-  color: #eeeeee;
-}
-
-input,
-select {
-  display: block;
-  width: 100%;
-  margin: 7px 0 17px;
-  padding: 11px;
-  border: 1px solid #53565b;
-  border-radius: 4px;
-  background: #161819;
-  color: white;
-}
-
-input[type="checkbox"] {
-  display: inline;
-  width: auto;
-  margin-right: 8px;
-}
-
-label {
-  display: block;
-  line-height: 1.5;
-}
-
-h1 {
-  font-size: 28px;
-}
-
-h2 {
-  font-size: 20px;
-}
-
-.hint,
-.status {
-  color: #bfc2c5;
-  line-height: 1.55;
-  font-size: 14px;
-}
-
-.status {
-  min-height: 24px;
-}
-
-.hidden {
-  display: none !important;
-}
-
-/* DISPLAY */
 
 .display {
   height: 100vh;
@@ -110,14 +32,90 @@ h2 {
     );
 }
 
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+  padding: 11px 16px;
+  margin: 4px 4px 4px 0;
+  border: 0;
+  border-radius: 5px;
+  background: #efbe64;
+  color: #17130b;
+  font-weight: bold;
+}
+
+button.secondary {
+  background: #36393d;
+  color: #eee;
+}
+
+button:focus,
+input:focus,
+select:focus {
+  outline: 2px solid #efbe64;
+  outline-offset: 3px;
+}
+
+label {
+  display: block;
+  line-height: 1.6;
+  margin-top: 16px;
+}
+
+input,
+select {
+  display: block;
+  width: 100%;
+  margin: 8px 0 16px;
+  padding: 10px;
+  background: #161819;
+  color: #fff;
+  border: 1px solid #666;
+  border-radius: 4px;
+}
+
+input[type="checkbox"] {
+  display: inline;
+  width: auto;
+  margin-right: 8px;
+}
+
+h1 {
+  font-size: 26px;
+}
+
+h2 {
+  font-size: 20px;
+  margin-top: 28px;
+}
+
+p {
+  line-height: 1.6;
+}
+
+.hint,
+.status {
+  color: #c5c7cb;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* BOARD */
+
 .board-shell {
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  padding: 0;
-  border: 0;
-  background: transparent;
 }
 
 .board-row {
@@ -133,9 +131,16 @@ h2 {
   width: 4.545454%;
   height: 100%;
 
-  border: 2px solid #080909;
+  border: 2px solid #080808;
   border-radius: 3px;
   overflow: hidden;
+
+  text-align: center;
+  font-family: "Arial Narrow", Arial, Helvetica, sans-serif;
+  font-weight: 700;
+
+  color: #f1f0e9;
+  text-shadow: 0 1px 2px #000;
 
   background:
     linear-gradient(
@@ -148,22 +153,9 @@ h2 {
       #171717 100%
     );
 
-  color: #f1f0e9;
-
-  font-family:
-    "Arial Narrow",
-    "Roboto Condensed",
-    Arial,
-    Helvetica,
-    sans-serif;
-
-  font-weight: bold;
-  text-align: center;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, .9);
-
   box-shadow:
-    inset 0 1px rgba(255, 255, 255, .08),
-    inset 0 -2px 4px rgba(0, 0, 0, .9);
+    inset 0 1px rgba(255,255,255,.08),
+    inset 0 -2px 4px rgba(0,0,0,.9);
 }
 
 .flap:after {
@@ -173,66 +165,51 @@ h2 {
   left: 0;
   right: 0;
   border-top: 2px solid #0a0a0b;
-  box-shadow: 0 1px rgba(255, 255, 255, .04);
+  box-shadow: 0 1px rgba(255,255,255,.04);
 }
 
 .flip {
-  animation: flap 96ms ease-out;
+  animation: flap 96ms linear;
 }
 
 @keyframes flap {
-  0% {
+  0%, 100% {
     transform: perspective(160px) rotateX(0deg);
   }
 
   50% {
     transform: perspective(160px) rotateX(-58deg);
   }
-
-  100% {
-    transform: perspective(160px) rotateX(0deg);
-  }
 }
 
-.color-yellow { background: #d6b43d; }
-.color-blue   { background: #3d79a5; }
-.color-orange { background: #d46f31; }
-.color-purple { background: #73599a; }
-.color-green  { background: #4f8c56; }
 .color-red    { background: #b9413c; }
+.color-orange { background: #d46f31; }
+.color-yellow { background: #d6b43d; }
+.color-green  { background: #4f8c56; }
+.color-blue   { background: #3d79a5; }
+.color-purple { background: #73599a; }
 .color-white  { background: #d9d6cb; }
-
-.night .board-shell {
-  opacity: .58;
-}
 
 /* CONTROLS */
 
 .board-toolbar {
   position: fixed;
-  bottom: 12px;
+  bottom: 10px;
   left: 12px;
   right: 12px;
 
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  font-size: 14px;
-  transition: opacity .3s;
+  text-align: center;
+  background: rgba(8,8,8,.9);
+  border-radius: 6px;
+  padding: 5px;
 }
 
-.board-toolbar button {
-  padding: 9px 12px;
-}
+/* Silk fix: touch hover and focus cannot keep controls visible. */
 
 .board-toolbar.faded {
-  opacity: 0;
-}
-
-.board-toolbar:hover,
-.board-toolbar:focus-within {
-  opacity: 1;
+  opacity: 0 !important;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 /* SETTINGS */
@@ -240,35 +217,25 @@ h2 {
 .settings-overlay {
   position: fixed;
   z-index: 10;
+
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
 
   overflow: auto;
-  background: rgba(0, 0, 0, .88);
-  padding: 20px;
+  padding: 16px;
+  background: rgba(0,0,0,.92);
 }
 
 .settings-inner {
-  max-width: 540px;
-  margin: 20px auto;
-  padding: 24px;
-  background: #202224;
+  max-width: 580px;
+  margin: 10px auto;
+  padding: 22px;
+
   border: 1px solid #454545;
   border-radius: 8px;
-}
-
-.settings-inner h1 {
-  margin-top: 10px;
-}
-
-.settings-inner p {
-  line-height: 1.6;
-}
-
-.settings-overlay button {
-  margin: 6px 0;
+  background: #202224;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -278,17 +245,13 @@ h2 {
 }
 
 @media (max-width: 600px) {
-  .board-toolbar {
-    display: block;
-  }
-
-  .board-toolbar .status {
-    display: block;
-  }
-
   .board-toolbar button {
-    padding: 8px;
+    padding: 9px;
     font-size: 14px;
+  }
+
+  .settings-inner {
+    padding: 16px;
   }
 }
 </style>
@@ -304,22 +267,29 @@ h2 {
 ></main>
 
 <footer id="toolbar" class="board-toolbar">
-  <span id="connection" class="status" role="status">
-    Tap once for fullscreen and sound
+  <span id="mode-status" class="status" role="status">
+    Daily messages
   </span>
 
-  <div>
-    <button id="start">Start display</button>
-    <button id="settings-button" class="secondary">
-      Settings
-    </button>
-  </div>
+  <br>
+
+  <button id="start">Fullscreen / sound</button>
+
+  <button id="pause" class="secondary">
+    Pause
+  </button>
+
+  <button id="settings-button" class="secondary">
+    Settings &amp; modes
+  </button>
 </footer>
 
 <section
   id="settings"
   class="hidden"
-  aria-label="Display settings"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="settings-title"
 >
   <div class="settings-inner">
 
@@ -327,40 +297,101 @@ h2 {
       Back to board
     </button>
 
-    <h1>Make it yours</h1>
+    <h1 id="settings-title">Make it yours</h1>
+
+    <h2>Choose a mode</h2>
+
+    <button id="normal">Daily messages</button>
+    <button id="focus">Start / restart focus</button>
+    <button id="breathe">Start breathing</button>
+    <button id="ambient-mode">Ambient colors</button>
+
+    <p class="hint">
+      Focus: 25 minutes, then a 5-minute break.
+      Breathing: 2 minutes, with 4 seconds in and 6 seconds out.
+      Breathe comfortably at your own pace.
+      Choosing a mode replaces the current session.
+    </p>
+
+    <p class="hint">
+      Tap the board for Pause / Resume.
+      Timers keep elapsed time if the tablet sleeps,
+      but cannot wake it or guarantee a sound while asleep.
+      Reloading ends the session.
+    </p>
+
+    <h2>Appearance</h2>
 
     <label>
-      Color pattern
+      Brightness:
+      <span id="brightness-value">100%</span>
+
+      <input
+        id="brightness"
+        type="range"
+        min="20"
+        max="100"
+        step="5"
+      >
+    </label>
+
+    <p class="hint">
+      Changes the board's appearance, not the tablet backlight.
+      Night mode dims it further from 10 PM to 6 AM.
+      Settings stay readable.
+    </p>
+
+    <label>
+      Animation speed
+
+      <select id="speed">
+        <option value="slow">Slow</option>
+        <option value="normal">Normal</option>
+        <option value="quick">Quick</option>
+      </select>
+    </label>
+
+    <label>
+      Message color pattern
 
       <select id="pattern">
-        <option value="corners">
-          Original colored corners
-        </option>
-        <option value="border">
-          Colored border
-        </option>
-        <option value="rainbow">
-          Rainbow top &amp; bottom
-        </option>
-        <option value="none">
-          No color accents
-        </option>
+        <option value="corners">Original colored corners</option>
+        <option value="border">Colored border</option>
+        <option value="rainbow">Rainbow top &amp; bottom</option>
+        <option value="none">No accents</option>
+      </select>
+    </label>
+
+    <label>
+      Color scenes between messages
+
+      <select id="ambient">
+        <option value="off">Off</option>
+        <option value="rainbow">Rainbow</option>
+        <option value="seasonal">Seasonal colors</option>
       </select>
     </label>
 
     <p class="hint">
-      Patterns decorate the time-based and holiday messages.
-      Letters are never covered. Quotes and the clock keep
-      their original plain style.
+      Color scenes last 12 seconds after each regular five-scene
+      cycle. Seasonal palettes follow the calendar month.
+      Ambient mode uses rainbow when this option is Off.
     </p>
+
+    <h2>Sound</h2>
 
     <label>
       <input id="sound" type="checkbox">
-      Quiet mechanical flap sound
+      Mechanical flap clicks
     </label>
 
     <label>
-      Sound level
+      <input id="chime" type="checkbox">
+      Chime when focus or break ends
+    </label>
+
+    <label>
+      Volume
 
       <input
         id="volume"
@@ -374,33 +405,29 @@ h2 {
     <button id="test-sound">Test sound</button>
 
     <p class="hint">
-      6 AM–5 PM: quiet clicks.
-      5–10 PM: softer clicks.
-      10 PM–6 AM: silent and dimmed.
-      Sound starts after a tap and must be unlocked
-      again after reloading.
+      Softer after 5 PM.
+      All sounds, including chimes, are off from 10 PM to 6 AM.
+      Tap Fullscreen / sound after reloading.
+      Breathing and ambient scenes stay quiet.
     </p>
 
     <p id="save-status" class="status" role="status"></p>
 
-    <h2>Works offline</h2>
+    <h2>Private &amp; offline</h2>
 
     <p id="offline-status" class="hint">
       Checking offline support…
     </p>
 
     <p class="hint">
-      No account, location access, calendar, tracking,
-      or external data services. Only these display
-      preferences are saved on this device.
-      The clock uses the tablet's time.
+      No account, location, calendar, tracking, or external data
+      services. Only display preferences are saved on this device.
+      GitHub's normal hosting logs apply if you use GitHub Pages.
     </p>
 
     <p class="hint">
-      GitHub Pages needs a connection for the first visit.
-      Its normal hosting logs still apply.
-      For no hosting requests, open a saved local copy
-      of this file instead.
+      Version 3 · Controls hide after six seconds.
+      Tap the board to bring them back.
     </p>
 
   </div>
@@ -413,69 +440,52 @@ h2 {
 <script>
 /* =====================================================
    YOUR ORIGINAL MESSAGES
-
-   Each array contains six board rows.
-   Keep individual lines at 22 characters or fewer.
    ===================================================== */
 
 window.ORIGINAL_CONTENT = {
   morningMessages: [
-    ["", "GOOD MORNING", "", "START WITH PURPOSE", "", ""],
-    ["", "NEW DAY", "", "NEW OPPORTUNITY", "", ""],
-    ["", "START STRONG", "", "MAKE TODAY COUNT", "", ""],
-    ["", "GOOD MORNING", "", "YOU SET THE TONE", "", ""],
-    ["", "TODAY IS YOURS", "", "GO MAKE IT COUNT", "", ""],
-    ["", "RISE AND MOVE", "", "ONE STEP FORWARD", "", ""]
+    ["","GOOD MORNING","","START WITH PURPOSE","",""],
+    ["","NEW DAY","","NEW OPPORTUNITY","",""],
+    ["","START STRONG","","MAKE TODAY COUNT","",""],
+    ["","GOOD MORNING","","YOU SET THE TONE","",""],
+    ["","TODAY IS YOURS","","GO MAKE IT COUNT","",""],
+    ["","RISE AND MOVE","","ONE STEP FORWARD","",""]
   ],
 
   afternoonMessages: [
-    ["", "KEEP GOING", "", "YOU'RE NOT DONE YET", "", ""],
-    ["", "SMALL STEPS", "", "STILL MOVE FORWARD", "", ""],
-    ["", "STAY FOCUSED", "", "FINISH WITH PURPOSE", "", ""],
-    ["", "KEEP BUILDING", "", "MOMENTUM MATTERS", "", ""],
-    ["", "TRUST THE PROCESS", "", "KEEP MOVING", "", ""],
-    ["", "HALFWAY THERE", "", "KEEP THE ENERGY", "", ""]
+    ["","KEEP GOING","","YOU'RE NOT DONE YET","",""],
+    ["","SMALL STEPS","","STILL MOVE FORWARD","",""],
+    ["","STAY FOCUSED","","FINISH WITH PURPOSE","",""],
+    ["","KEEP BUILDING","","MOMENTUM MATTERS","",""],
+    ["","TRUST THE PROCESS","","KEEP MOVING","",""],
+    ["","HALFWAY THERE","","KEEP THE ENERGY","",""]
   ],
 
   eveningMessages: [
-    ["", "SLOW DOWN", "", "YOU DID ENOUGH", "", ""],
-    ["", "WIND DOWN", "", "LET TODAY SETTLE", "", ""],
-    ["", "TAKE IT EASY", "", "ENJOY YOUR EVENING", "", ""],
-    ["", "LOOK BACK", "", "NOTICE THE PROGRESS", "", ""],
-    ["", "REST IS PART", "", "OF THE PROCESS", "", ""],
-    ["", "EXHALE", "", "TOMORROW CAN WAIT", "", ""]
+    ["","SLOW DOWN","","YOU DID ENOUGH","",""],
+    ["","WIND DOWN","","LET TODAY SETTLE","",""],
+    ["","TAKE IT EASY","","ENJOY YOUR EVENING","",""],
+    ["","LOOK BACK","","NOTICE THE PROGRESS","",""],
+    ["","REST IS PART","","OF THE PROCESS","",""],
+    ["","EXHALE","","TOMORROW CAN WAIT","",""]
   ],
 
   nightMessages: [
-    [
-      "",
-      "SLEEP TIGHT",
-      "",
-      "TOMORROW IS",
-      "A FRESH START",
-      ""
-    ],
-    ["", "GOOD NIGHT", "", "REST YOUR MIND", "", ""],
-    ["", "REST WELL", "", "YOU EARNED IT", "", ""],
-    ["", "LET THE DAY GO", "", "TOMORROW IS NEW", "", ""],
-    ["", "TIME TO REST", "", "RECHARGE FOR TOMORROW", "", ""],
-    ["", "SLEEP WELL", "", "START FRESH TOMORROW", "", ""]
+    ["","SLEEP TIGHT","","TOMORROW IS","A FRESH START",""],
+    ["","GOOD NIGHT","","REST YOUR MIND","",""],
+    ["","REST WELL","","YOU EARNED IT","",""],
+    ["","LET THE DAY GO","","TOMORROW IS NEW","",""],
+    ["","TIME TO REST","","RECHARGE FOR TOMORROW","",""],
+    ["","SLEEP WELL","","START FRESH TOMORROW","",""]
   ],
 
   inspirationalQuotes: [
-    ["", "PROGRESS", "", "OVER PERFECTION", "", ""],
-    [
-      "",
-      "DISCIPLINE BUILDS",
-      "",
-      "WHAT MOTIVATION STARTS",
-      "",
-      ""
-    ],
-    ["", "BE PROUD", "", "THEN KEEP GOING", "", ""],
-    ["", "CONSISTENCY", "", "CHANGES EVERYTHING", "", ""],
-    ["", "DO THE NEXT", "", "RIGHT THING", "", ""],
-    ["", "YOUR FUTURE", "", "NEEDS TODAY'S EFFORT", "", ""]
+    ["","PROGRESS","","OVER PERFECTION","",""],
+    ["","DISCIPLINE BUILDS","","WHAT MOTIVATION STARTS","",""],
+    ["","BE PROUD","","THEN KEEP GOING","",""],
+    ["","CONSISTENCY","","CHANGES EVERYTHING","",""],
+    ["","DO THE NEXT","","RIGHT THING","",""],
+    ["","YOUR FUTURE","","NEEDS TODAY'S EFFORT","",""]
   ],
 
   specialDates: {
@@ -501,188 +511,180 @@ window.ORIGINAL_CONTENT = {
 
 
 /* =====================================================
-   TEXT FORMATTING
-   ===================================================== */
-
-(function (root) {
-  "use strict";
-
-  var C = {};
-
-  C.clean = function (s) {
-    s = String(s || "");
-
-    if (s.normalize) {
-      s = s.normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
-    }
-
-    return s
-      .replace(/[‘’]/g, "'")
-      .replace(/[“”]/g, '"')
-      .replace(/[–—]/g, "-")
-      .toUpperCase()
-      .replace(/[^\x20-\x7E\n]/g, " ");
-  };
-
-  C.lines = function (text) {
-    var out = [];
-    var paragraphs = C.clean(text).split("\n");
-
-    paragraphs.forEach(function (line) {
-      var words = line.split(/ +/);
-      var current = "";
-
-      words.forEach(function (word) {
-        if (!word) {
-          return;
-        }
-
-        if (
-          current &&
-          current.length + word.length + 1 > 22
-        ) {
-          out.push(current);
-          current = "";
-        }
-
-        while (word.length > 22) {
-          if (current) {
-            out.push(current);
-            current = "";
-          }
-
-          out.push(word.slice(0, 22));
-          word = word.slice(22);
-        }
-
-        if (word) {
-          current += (current ? " " : "") + word;
-        }
-      });
-
-      out.push(current);
-    });
-
-    return out;
-  };
-
-  C.fits = function (text) {
-    return C.lines(text).length <= 6;
-  };
-
-  C.frame = function (text) {
-    var lines = C.lines(text).slice(0, 6);
-    var rows = [];
-    var top = Math.floor((6 - lines.length) / 2);
-
-    for (var i = 0; i < 6; i++) {
-      var s = lines[i - top] || "";
-      var left = Math.floor((22 - s.length) / 2);
-
-      rows.push(
-        (
-          new Array(left + 1).join(" ") +
-          s +
-          new Array(23).join(" ")
-        ).slice(0, 22)
-      );
-    }
-
-    return rows.join("");
-  };
-
-  C.period = function (hour) {
-    if (hour < 6 || hour >= 22) {
-      return "night";
-    }
-
-    if (hour < 12) {
-      return "morning";
-    }
-
-    if (hour < 17) {
-      return "afternoon";
-    }
-
-    return "evening";
-  };
-
-  root.BoardCore = C;
-
-}(window));
-
-
-/* =====================================================
-   DISPLAY APPLICATION
+   APPLICATION
    ===================================================== */
 
 (function () {
   "use strict";
 
-  var C = BoardCore;
+  var COLS = 22;
+  var ROWS = 6;
 
-  var settings = {
+  var cells = [];
+  var timers = [];
+
+  var board = document.getElementById("board");
+
+  var defaults = {
     sound: false,
+    chime: true,
     volume: 0.18,
-    pattern: "corners"
+    brightness: 100,
+    pattern: "corners",
+    speed: "normal",
+    ambient: "rainbow"
   };
 
-  /* Restore preferences saved on this device. */
+  var settings = {};
+  var key;
+  var saved;
+
+  for (key in defaults) {
+    settings[key] = defaults[key];
+  }
 
   try {
-    var saved = JSON.parse(
+    saved = JSON.parse(
       localStorage.getItem("mini-board-preferences-v1")
     );
 
     if (saved) {
-      settings.sound = !!saved.sound;
-
-      settings.volume = Math.max(
-        0,
-        Math.min(0.4, Number(saved.volume) || 0)
-      );
-
-      if (
-        ["corners", "border", "rainbow", "none"]
-          .indexOf(saved.pattern) >= 0
-      ) {
-        settings.pattern = saved.pattern;
+      for (key in defaults) {
+        if (typeof saved[key] === typeof defaults[key]) {
+          settings[key] = saved[key];
+        }
       }
     }
   } catch (e) {}
 
-  var board = document.getElementById("board");
-  var cells = [];
-  var last = "";
-  var audio = null;
+  function clamp(number, minimum, maximum) {
+    return isFinite(number)
+      ? Math.max(minimum, Math.min(maximum, number))
+      : minimum;
+  }
 
+  settings.volume = clamp(settings.volume, 0, 0.4);
+  settings.brightness = clamp(settings.brightness, 20, 100);
+
+  if (
+    ["corners","border","rainbow","none"]
+      .indexOf(settings.pattern) < 0
+  ) {
+    settings.pattern = "corners";
+  }
+
+  if (
+    ["slow","normal","quick"]
+      .indexOf(settings.speed) < 0
+  ) {
+    settings.speed = "normal";
+  }
+
+  if (
+    ["off","rainbow","seasonal"]
+      .indexOf(settings.ambient) < 0
+  ) {
+    settings.ambient = "rainbow";
+  }
+
+  var audio = null;
+  var wakeLock = null;
+  var wakePending = false;
+  var hideTimer = null;
+
+  var mode = "normal";
+  var paused = false;
+  var pausedAt = 0;
+  var pauseRemaining = 0;
+
+  var scene = null;
   var sceneUntil = 0;
-  var rotationStep = 0;
-  var lastTime = -1;
+  var step = 0;
+  var lastMessage = -1;
   var lastQuote = -1;
 
-  var activeScene = null;
-  var previousPeriod = "";
-  var wakeLock = null;
+  var lastPeriod = "";
+  var lastFrame = "";
+  var lastColors = "";
+  var generation = 0;
 
-  var colorLast = "";
-  var animation = 0;
+  var focusPhase = "focus";
+  var focusEnd = 0;
+  var breathStart = 0;
+
+  var ambientStep = 0;
+  var ambientUntil = 0;
+  var ambientColors = null;
+
+  var periodColors = {
+    morning: "yellow",
+    afternoon: "blue",
+    evening: "orange",
+    night: "purple"
+  };
+
+  var rainbow = [
+    "red",
+    "orange",
+    "yellow",
+    "green",
+    "blue",
+    "purple",
+    "white"
+  ];
+
+  var chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!?$#@&+-";
 
   function id(name) {
     return document.getElementById(name);
   }
 
-  function status(text) {
-    id("connection").textContent = text;
+  function period(hour) {
+    return hour < 6 || hour >= 22
+      ? "night"
+      : hour < 12
+        ? "morning"
+        : hour < 17
+          ? "afternoon"
+          : "evening";
   }
 
 
   /* ===================================================
-     CREATE AND SIZE THE BOARD
+     BOARD LAYOUT
      =================================================== */
 
-  function size() {
+  function frame(lines) {
+    var output = "";
+
+    for (var r = 0; r < ROWS; r++) {
+      var text = String(lines[r] || "")
+        .toUpperCase()
+        .slice(0, COLS);
+
+      var left = Math.floor((COLS - text.length) / 2);
+
+      output += (
+        new Array(left + 1).join(" ") +
+        text +
+        new Array(23).join(" ")
+      ).slice(0, COLS);
+    }
+
+    return output;
+  }
+
+  function reduced() {
+    return (
+      window.matchMedia &&
+      window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches
+    );
+  }
+
+  function fit() {
     var width = Math.min(
       window.innerWidth * 0.96,
       window.innerHeight * 0.92 * 1.87
@@ -700,11 +702,12 @@ window.ORIGINAL_CONTENT = {
       (height / 6 - 4) + "px";
   }
 
-  for (var r = 0; r < 6; r++) {
+  for (var r = 0; r < ROWS; r++) {
     var row = document.createElement("div");
+
     row.className = "board-row";
 
-    for (var c = 0; c < 22; c++) {
+    for (var c = 0; c < COLS; c++) {
       var tile = document.createElement("span");
 
       tile.className = "flap";
@@ -717,241 +720,359 @@ window.ORIGINAL_CONTENT = {
     board.appendChild(row);
   }
 
-  size();
-
-  window.addEventListener("resize", size);
-
 
   /* ===================================================
-     GENERATED SOUND — NO AUDIO FILES
+     SOUND
+     Generated locally; no sound downloads.
      =================================================== */
 
-  function clickSound() {
-    var period = C.period(new Date().getHours());
+  function unlock(done) {
+    try {
+      var API =
+        window.AudioContext ||
+        window.webkitAudioContext;
+
+      if (!API) {
+        if (done) done(false);
+        return;
+      }
+
+      audio = audio || new API();
+
+      var source = audio.createBufferSource();
+
+      source.buffer = audio.createBuffer(
+        1,
+        1,
+        audio.sampleRate
+      );
+
+      source.connect(audio.destination);
+      source.start(0);
+
+      var result = audio.resume
+        ? audio.resume()
+        : null;
+
+      if (result && result.then) {
+        result
+          .then(function () {
+            if (done) done(true);
+          })
+          .catch(function () {
+            if (done) done(false);
+          });
+      } else if (done) {
+        done(true);
+      }
+
+    } catch (e) {
+      if (done) done(false);
+    }
+  }
+
+  function sound(chime) {
+    var p = period(new Date().getHours());
 
     if (
       !audio ||
       audio.state === "suspended" ||
-      !settings.sound ||
-      period === "night"
+      document.hidden ||
+      p === "night" ||
+      settings.volume === 0 ||
+      (chime ? !settings.chime : !settings.sound)
     ) {
       return;
     }
 
     try {
-      var buffer = audio.createBuffer(
-        1,
-        Math.floor(audio.sampleRate * 0.045),
-        audio.sampleRate
-      );
-
-      var samples = buffer.getChannelData(0);
-
-      for (var i = 0; i < samples.length; i++) {
-        samples[i] =
-          (Math.random() * 2 - 1) *
-          Math.pow(1 - i / samples.length, 5);
-      }
-
-      var source = audio.createBufferSource();
       var gain = audio.createGain();
 
-      source.buffer = buffer;
+      var volume =
+        settings.volume *
+        (p === "evening" ? 0.3 : 1);
 
-      gain.gain.value =
-        Math.max(
-          0,
-          Math.min(0.4, Number(settings.volume) || 0)
-        ) *
-        (period === "evening" ? 0.3 : 1);
-
-      source.connect(gain);
       gain.connect(audio.destination);
-      source.start(0);
+
+      if (chime) {
+        var tone = audio.createOscillator();
+        var time = audio.currentTime;
+
+        tone.type = "sine";
+        tone.frequency.value = 660;
+
+        gain.gain.setValueAtTime(0, time);
+
+        gain.gain.linearRampToValueAtTime(
+          volume * 0.35,
+          time + 0.02
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+          0.0001,
+          time + 0.7
+        );
+
+        tone.connect(gain);
+        tone.start(time);
+        tone.stop(time + 0.72);
+
+      } else {
+        var buffer = audio.createBuffer(
+          1,
+          Math.floor(audio.sampleRate * 0.045),
+          audio.sampleRate
+        );
+
+        var samples = buffer.getChannelData(0);
+
+        for (var i = 0; i < samples.length; i++) {
+          samples[i] =
+            (Math.random() * 2 - 1) *
+            Math.pow(1 - i / samples.length, 5);
+        }
+
+        var source = audio.createBufferSource();
+
+        source.buffer = buffer;
+        gain.gain.value = volume;
+
+        source.connect(gain);
+        source.start(0);
+      }
 
     } catch (e) {}
   }
 
 
   /* ===================================================
-     COLORS AND FLAP ANIMATION
+     TILE COLORS AND ANIMATION
      =================================================== */
 
-  function paint(text, color) {
-    var frame = C.frame(text);
-    var pattern = settings.pattern || "corners";
-    var signature = (color || "") + pattern;
+  function cancelAnimation() {
+    generation++;
 
-    if (
-      frame === last &&
-      signature === colorLast
-    ) {
-      return;
-    }
+    timers.forEach(function (timer) {
+      clearTimeout(timer);
+    });
 
-    board.setAttribute("aria-label", text);
+    timers = [];
+  }
 
-    animation++;
-    var generation = animation;
+  function accents(text, color) {
+    var colors = [];
 
-    clickSound();
-
-    cells.forEach(function (element, i) {
+    for (var i = 0; i < 132; i++) {
       var row = Math.floor(i / 22);
       var col = i % 22;
 
-      var accent = false;
+      var on = false;
       var hue = color;
 
-      /* Only decorate blank cells. */
-
-      if (color && frame[i] === " ") {
-        if (pattern === "corners") {
-          accent =
+      if (color && text[i] === " ") {
+        if (settings.pattern === "corners") {
+          on =
             (row === 0 || row === 5) &&
             (col === 0 || col === 21);
-        } else if (pattern === "border") {
-          accent =
+        }
+
+        if (settings.pattern === "border") {
+          on =
             row === 0 ||
             row === 5 ||
             col === 0 ||
             col === 21;
-        } else if (pattern === "rainbow") {
-          accent = row === 0 || row === 5;
         }
 
-        if (pattern === "rainbow") {
-          hue = [
-            "red",
-            "orange",
-            "yellow",
-            "green",
-            "blue",
-            "purple",
-            "white"
-          ][Math.floor(col / 22 * 7)];
+        if (settings.pattern === "rainbow") {
+          on = row === 0 || row === 5;
+          hue = rainbow[Math.floor(col / 22 * 7)];
         }
       }
 
+      colors.push(on ? hue : "");
+    }
+
+    return colors;
+  }
+
+  function paint(
+    lines,
+    color,
+    customColors,
+    quiet,
+    instant,
+    label
+  ) {
+    var text = frame(lines);
+
+    var colors =
+      customColors || accents(text, color);
+
+    var signature = colors.join(",");
+
+    if (
+      text === lastFrame &&
+      signature === lastColors
+    ) {
+      return;
+    }
+
+    cancelAnimation();
+
+    var mine = generation;
+
+    board.setAttribute(
+      "aria-label",
+      label || lines.join(" ").replace(/ +/g, " ")
+    );
+
+    if (!quiet) {
+      sound(false);
+    }
+
+    var speed = {
+      slow: 110,
+      normal: 62,
+      quick: 32
+    }[settings.speed];
+
+    cells.forEach(function (tile, i) {
       var className =
         "flap" +
-        (accent ? " color-" + hue : "");
+        (colors[i] ? " color-" + colors[i] : "");
 
-      element.className = className;
+      tile.className = className;
 
-      if (frame[i] === last[i]) {
-        element.textContent = frame[i];
+      tile.style.animationDuration =
+        Math.round(speed * 1.5) + "ms";
+
+      if (
+        instant ||
+        reduced() ||
+        text[i] === lastFrame[i]
+      ) {
+        tile.textContent = text[i];
         return;
       }
 
-      var reducedMotion =
-        window.matchMedia &&
-        window.matchMedia(
-          "(prefers-reduced-motion: reduce)"
-        ).matches;
+      var remaining =
+        3 + Math.floor(Math.random() * 5);
 
-      if (reducedMotion) {
-        element.textContent = frame[i];
-        return;
-      }
-
-      var flips = 3 + Math.floor(Math.random() * 5);
-      var count = 0;
-
-      setTimeout(function () {
-        if (generation !== animation) {
+      function flip() {
+        if (mine !== generation) {
           return;
         }
 
-        var timer = setInterval(function () {
-          if (generation !== animation) {
-            clearInterval(timer);
-            return;
-          }
+        remaining--;
 
-          count++;
+        tile.className = className;
 
-          element.className = className;
+        void tile.offsetWidth;
 
-          void element.offsetWidth;
+        tile.className = className + " flip";
 
-          element.className = className + " flip";
+        tile.textContent = remaining
+          ? chars[Math.floor(Math.random() * chars.length)]
+          : text[i];
 
-          if (count >= flips) {
-            element.textContent = frame[i];
-            clearInterval(timer);
-          } else {
-            element.textContent =
-              "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!?$#@&+-"[
-                Math.floor(Math.random() * 40)
-              ];
-          }
+        if (remaining) {
+          timers.push(setTimeout(flip, speed));
+        }
+      }
 
-        }, 62);
+      var delay =
+        (
+          i % 22 * 11 +
+          Math.floor(i / 22) * 33
+        ) *
+        speed / 62;
 
-      }, col * 11 + row * 33 + Math.random() * 70);
-
+      timers.push(setTimeout(flip, delay));
     });
 
-    last = frame;
-    colorLast = signature;
+    lastFrame = text;
+    lastColors = signature;
   }
 
 
   /* ===================================================
-     SCENE SELECTION
+     ORIGINAL MESSAGE ROTATION
      =================================================== */
 
   function choose(length, previous) {
-    var next = Math.floor(Math.random() * length);
+    var n = Math.floor(Math.random() * length);
 
-    if (length > 1 && next === previous) {
-      return (
-        next +
-        1 +
-        Math.floor(Math.random() * (length - 1))
-      ) % length;
-    }
-
-    return next;
+    return length > 1 && n === previous
+      ? (
+          n +
+          1 +
+          Math.floor(Math.random() * (length - 1))
+        ) % length
+      : n;
   }
 
-  function clockText(date) {
-    return (
+  function clockLines(date) {
+    var days = [
+      "SUNDAY",
+      "MONDAY",
+      "TUESDAY",
+      "WEDNESDAY",
+      "THURSDAY",
+      "FRIDAY",
+      "SATURDAY"
+    ];
+
+    var months = [
+      "JANUARY",
+      "FEBRUARY",
+      "MARCH",
+      "APRIL",
+      "MAY",
+      "JUNE",
+      "JULY",
+      "AUGUST",
+      "SEPTEMBER",
+      "OCTOBER",
+      "NOVEMBER",
+      "DECEMBER"
+    ];
+
+    var time =
       (date.getHours() % 12 || 12) +
       ":" +
       ("0" + date.getMinutes()).slice(-2) +
-      (date.getHours() < 12 ? " AM" : " PM")
-    );
+      (date.getHours() < 12 ? " AM" : " PM");
+
+    return [
+      "",
+      days[date.getDay()],
+      months[date.getMonth()] + " " + date.getDate(),
+      "",
+      time,
+      ""
+    ];
   }
 
   function nextScene(now) {
     var date = new Date(now);
-    var period = C.period(date.getHours());
-
-    var colors = {
-      morning: "yellow",
-      afternoon: "blue",
-      evening: "orange",
-      night: "purple"
-    };
-
-    var original = ORIGINAL_CONTENT;
+    var p = period(date.getHours());
 
     var dateKey =
       ("0" + (date.getMonth() + 1)).slice(-2) +
       "-" +
       ("0" + date.getDate()).slice(-2);
 
-    var special = original.specialDates[dateKey];
+    var special =
+      ORIGINAL_CONTENT.specialDates[dateKey];
 
-    if (special && rotationStep % 4 === 0) {
-      rotationStep++;
+    if (special && step % 4 === 0) {
+      step++;
 
       return {
-        text: special.join("\n"),
+        lines: special,
         color: "green",
-        duration: 30
+        seconds: 30
       };
     }
 
@@ -963,230 +1084,539 @@ window.ORIGINAL_CONTENT = {
       "quote"
     ];
 
-    var type = pattern[rotationStep % pattern.length];
+    if (settings.ambient !== "off") {
+      pattern.push("ambient");
+    }
 
-    rotationStep++;
+    var type = pattern[step % pattern.length];
 
-    if (type === "date") {
-      var weekdays = [
-        "SUNDAY",
-        "MONDAY",
-        "TUESDAY",
-        "WEDNESDAY",
-        "THURSDAY",
-        "FRIDAY",
-        "SATURDAY"
-      ];
+    step++;
 
-      var months = [
-        "JANUARY",
-        "FEBRUARY",
-        "MARCH",
-        "APRIL",
-        "MAY",
-        "JUNE",
-        "JULY",
-        "AUGUST",
-        "SEPTEMBER",
-        "OCTOBER",
-        "NOVEMBER",
-        "DECEMBER"
-      ];
+    if (type === "ambient") {
+      ambientUntil = 0;
 
       return {
-        text: [
-          "",
-          weekdays[date.getDay()],
-          months[date.getMonth()] + " " + date.getDate(),
-          "",
-          clockText(date),
-          ""
-        ].join("\n"),
+        type: "ambient",
+        seconds: 12
+      };
+    }
 
-        duration: 12,
-        type: "date"
+    if (type === "date") {
+      return {
+        type: "date",
+        lines: clockLines(date),
+        seconds: 12
       };
     }
 
     if (type === "quote") {
       lastQuote = choose(
-        original.inspirationalQuotes.length,
+        ORIGINAL_CONTENT.inspirationalQuotes.length,
         lastQuote
       );
 
       return {
-        text:
-          original.inspirationalQuotes[lastQuote]
-            .join("\n"),
-
-        duration: 22
+        lines: ORIGINAL_CONTENT.inspirationalQuotes[lastQuote],
+        seconds: 22
       };
     }
 
-    var messages = original[
-      period + "Messages"
-    ].map(function (lines) {
-      return lines.join("\n");
-    });
+    var messages = ORIGINAL_CONTENT[p + "Messages"];
 
-    lastTime = choose(messages.length, lastTime);
+    lastMessage = choose(messages.length, lastMessage);
 
     return {
-      text: messages[lastTime],
-      duration: 24,
-      color: colors[period]
+      lines: messages[lastMessage],
+      color: periodColors[p],
+      seconds: 24
     };
+  }
+
+
+  /* ===================================================
+     AMBIENT COLOR MODE
+     =================================================== */
+
+  function ambient(now) {
+    if (!ambientColors || now >= ambientUntil) {
+      var palette = rainbow;
+      var month = new Date(now).getMonth();
+
+      if (settings.ambient === "seasonal") {
+        if (month < 2 || month === 11) {
+          palette = ["blue","white","purple"];
+        } else if (month < 5) {
+          palette = ["green","yellow","purple"];
+        } else if (month < 8) {
+          palette = ["blue","yellow","orange"];
+        } else {
+          palette = ["orange","red","yellow"];
+        }
+      }
+
+      ambientColors = [];
+
+      for (var i = 0; i < 132; i++) {
+        var position =
+          Math.floor(i / 22) +
+          Math.floor(i % 22 / 3) +
+          ambientStep;
+
+        ambientColors.push(
+          palette[position % palette.length]
+        );
+      }
+
+      ambientStep++;
+
+      ambientUntil = reduced()
+        ? Infinity
+        : now + 4000;
+    }
+
+    paint(
+      [],
+      null,
+      ambientColors,
+      true,
+      true,
+      "Ambient color pattern"
+    );
+  }
+
+
+  /* ===================================================
+     FOCUS TIMER AND BREATHING
+     =================================================== */
+
+  function countdown(milliseconds) {
+    var seconds = Math.max(
+      0,
+      Math.ceil(milliseconds / 1000)
+    );
+
+    return (
+      ("0" + Math.floor(seconds / 60)).slice(-2) +
+      ":" +
+      ("0" + seconds % 60).slice(-2)
+    );
+  }
+
+  function timerChime(now, deadline) {
+    /* Skip old alarms when a sleeping tablet wakes. */
+
+    if (now - deadline <= 10000) {
+      sound(true);
+    }
   }
 
   function tick() {
     var now = Date.now();
-    var period = C.period(new Date(now).getHours());
+    var p = period(new Date(now).getHours());
 
-    document.body.className =
-      "display" +
-      (period === "night" ? " night" : "");
+    board.style.opacity =
+      settings.brightness / 100 *
+      (p === "night" ? 0.58 : 1);
 
-    if (
-      previousPeriod !== period ||
-      now >= sceneUntil
-    ) {
-      activeScene = nextScene(now);
-
-      sceneUntil =
-        now + activeScene.duration * 1000;
+    if (paused) {
+      return;
     }
 
-    if (activeScene) {
-      paint(activeScene.text, activeScene.color);
+    if (mode === "focus") {
+      if (
+        focusPhase === "focus" &&
+        now >= focusEnd
+      ) {
+        var boundary = focusEnd;
+
+        focusPhase = "break";
+        focusEnd += 5 * 60000;
+
+        if (now < focusEnd) {
+          timerChime(now, boundary);
+        }
+      }
+
+      if (
+        focusPhase === "break" &&
+        now >= focusEnd
+      ) {
+        focusPhase = "done";
+        timerChime(now, focusEnd);
+      }
+
+      if (focusPhase === "done") {
+        paint(
+          [
+            "",
+            "SESSION COMPLETE",
+            "",
+            "NICE WORK",
+            "TAP FOR CONTROLS",
+            ""
+          ],
+          "green",
+          null,
+          true,
+          true
+        );
+
+      } else {
+        paint(
+          [
+            "",
+            focusPhase === "focus"
+              ? "FOCUS TIME"
+              : "TAKE A BREAK",
+            "",
+            countdown(focusEnd - now),
+            focusPhase === "focus"
+              ? "ONE THING AT A TIME"
+              : "STRETCH AND RESET",
+            ""
+          ],
+          focusPhase === "focus" ? "blue" : "green",
+          null,
+          true,
+          true
+        );
+      }
+
+    } else if (mode === "breathing") {
+      var elapsed = now - breathStart;
+
+      if (elapsed >= 120000) {
+        normal();
+        return;
+      }
+
+      var phase = elapsed % 10000;
+      var inhale = phase < 4000;
+
+      paint(
+        [
+          "",
+          inhale ? "BREATHE IN" : "BREATHE OUT",
+          "",
+          String(
+            Math.ceil(
+              (
+                (inhale ? 4000 : 10000) -
+                phase
+              ) / 1000
+            )
+          ),
+          "GENTLY AT YOUR PACE",
+          ""
+        ],
+        "blue",
+        null,
+        true,
+        true
+      );
+
+    } else if (mode === "ambient") {
+      ambient(now);
+
+    } else {
+      if (
+        !scene ||
+        now >= sceneUntil ||
+        lastPeriod !== p
+      ) {
+        scene = nextScene(now);
+        sceneUntil = now + scene.seconds * 1000;
+      }
+
+      if (scene.type === "ambient") {
+        ambient(now);
+
+      } else {
+        if (scene.type === "date") {
+          scene.lines = clockLines(new Date(now));
+        }
+
+        paint(
+          scene.lines,
+          scene.color,
+          null,
+          scene.type === "date",
+          false
+        );
+      }
     }
 
-    previousPeriod = period;
+    lastPeriod = p;
+
+    id("mode-status").textContent =
+      mode === "normal"
+        ? "Daily messages"
+        : mode === "focus"
+          ? "Focus session · " + focusPhase
+          : mode === "breathing"
+            ? "Two-minute breathing"
+            : "Ambient colors";
   }
 
 
   /* ===================================================
-     FULLSCREEN AND OPTIONAL WAKE LOCK
+     MODE SWITCHING AND PAUSE
+     =================================================== */
+
+  function resetMode(next) {
+    cancelAnimation();
+
+    mode = next;
+    paused = false;
+
+    scene = null;
+    sceneUntil = 0;
+
+    lastFrame = "";
+    lastColors = "";
+
+    ambientUntil = 0;
+    ambientColors = null;
+
+    id("pause").textContent = "Pause";
+  }
+
+  function normal() {
+    resetMode("normal");
+    tick();
+  }
+
+  function pause() {
+    var now = Date.now();
+
+    if (!paused) {
+      tick();
+
+      paused = true;
+      pausedAt = now;
+
+      pauseRemaining = Math.max(
+        0,
+        (
+          mode === "focus"
+            ? focusEnd
+            : sceneUntil
+        ) - now
+      );
+
+      cancelAnimation();
+
+      cells.forEach(function (tile, i) {
+        tile.textContent = lastFrame[i] || " ";
+
+        tile.className =
+          tile.className.replace(" flip", "");
+      });
+
+      id("pause").textContent = "Resume";
+
+      id("mode-status").textContent =
+        "Paused · tap Resume to continue";
+
+    } else {
+      paused = false;
+
+      if (
+        mode === "focus" &&
+        focusPhase !== "done"
+      ) {
+        focusEnd = now + pauseRemaining;
+      }
+
+      if (mode === "breathing") {
+        breathStart += now - pausedAt;
+      }
+
+      if (mode === "normal") {
+        sceneUntil = now + pauseRemaining;
+      }
+
+      if (isFinite(ambientUntil)) {
+        ambientUntil += now - pausedAt;
+      }
+
+      lastPeriod = period(new Date(now).getHours());
+
+      id("pause").textContent = "Pause";
+
+      tick();
+    }
+
+    reveal();
+  }
+
+
+  /* ===================================================
+     FULLSCREEN AND HIDDEN CONTROLS
      =================================================== */
 
   function requestWake() {
     if (
-      navigator.wakeLock &&
-      navigator.wakeLock.request &&
-      (!wakeLock || wakeLock.released)
+      !navigator.wakeLock ||
+      !navigator.wakeLock.request ||
+      wakePending ||
+      (wakeLock && !wakeLock.released)
     ) {
-      navigator.wakeLock.request("screen")
-        .then(function (lock) {
-          wakeLock = lock;
-        })
-        .catch(function () {});
+      return;
+    }
+
+    wakePending = true;
+
+    navigator.wakeLock.request("screen")
+      .then(function (lock) {
+        wakeLock = lock;
+        wakePending = false;
+      })
+      .catch(function () {
+        wakePending = false;
+      });
+  }
+
+  function hide() {
+    id("toolbar").className = "board-toolbar faded";
+  }
+
+  function reveal() {
+    clearTimeout(hideTimer);
+
+    id("toolbar").className = "board-toolbar";
+
+    if (id("settings").className === "hidden") {
+      hideTimer = setTimeout(hide, 6000);
     }
   }
 
-  id("start").onclick = function () {
-    try {
-      var AudioAPI =
-        window.AudioContext ||
-        window.webkitAudioContext;
+  function start() {
+    unlock();
+    requestWake();
 
-      if (AudioAPI) {
-        audio = audio || new AudioAPI();
+    var root = document.documentElement;
 
-        if (audio.resume) {
-          var resumed = audio.resume();
+    if (
+      !document.fullscreenElement &&
+      !document.webkitFullscreenElement
+    ) {
+      var method =
+        root.requestFullscreen ||
+        root.webkitRequestFullscreen;
 
-          if (resumed && resumed.catch) {
-            resumed.catch(function () {});
-          }
-        }
-
-        var source = audio.createBufferSource();
-
-        source.buffer = audio.createBuffer(
-          1,
-          1,
-          audio.sampleRate
-        );
-
-        source.connect(audio.destination);
-        source.start(0);
-      }
-
-    } catch (e) {}
-
-    var element = document.documentElement;
-
-    var fullscreen =
-      element.requestFullscreen ||
-      element.webkitRequestFullscreen;
-
-    if (fullscreen) {
       try {
-        var result = fullscreen.call(element);
+        if (method) {
+          var result = method.call(root);
 
-        if (result && result.catch) {
-          result.catch(function () {});
+          if (result && result.catch) {
+            result.catch(function () {});
+          }
         }
       } catch (e) {}
     }
 
+    reveal();
+    setTimeout(fit, 300);
+  }
+
+  function closeSettings() {
+    id("settings").className = "hidden";
+    id("settings-button").focus();
+    reveal();
+  }
+
+  id("start").onclick = start;
+  board.onclick = start;
+  id("pause").onclick = pause;
+
+  id("settings-button").onclick = function () {
+    clearTimeout(hideTimer);
+
+    id("toolbar").className = "board-toolbar";
+    id("settings").className = "settings-overlay";
+
+    id("close-settings").focus();
+  };
+
+  id("close-settings").onclick = closeSettings;
+
+  id("normal").onclick = function () {
+    normal();
+    closeSettings();
+  };
+
+  id("focus").onclick = function () {
+    unlock();
     requestWake();
 
-    id("start").textContent = "Fullscreen / sound";
+    resetMode("focus");
 
-    status(
-      audio && audio.state !== "suspended"
-        ? "Display ready"
-        : "Display ready · audio may be unavailable"
-    );
+    focusPhase = "focus";
+    focusEnd = Date.now() + 25 * 60000;
 
-    setTimeout(function () {
-      id("toolbar").className =
-        "board-toolbar faded";
-    }, 6000);
+    tick();
+    closeSettings();
+  };
 
-    setTimeout(size, 300);
+  id("breathe").onclick = function () {
+    requestWake();
+
+    resetMode("breathing");
+    breathStart = Date.now();
+
+    tick();
+    closeSettings();
+  };
+
+  id("ambient-mode").onclick = function () {
+    requestWake();
+
+    resetMode("ambient");
+
+    tick();
+    closeSettings();
   };
 
 
   /* ===================================================
-     SETTINGS CONTROLS
+     SAVE DISPLAY PREFERENCES
      =================================================== */
 
-  function reveal() {
-    id("toolbar").className = "board-toolbar";
-  }
-
-  board.onclick = function () {
-    reveal();
-    id("start").click();
-  };
-
-  id("settings-button").onclick = function () {
-    reveal();
-
-    id("settings").className = "settings-overlay";
-    id("close-settings").focus();
-  };
-
-  id("close-settings").onclick = function () {
-    id("settings").className = "hidden";
-    id("settings-button").focus();
-  };
-
-  document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape") {
-      id("close-settings").click();
-    }
+  ["sound","chime"].forEach(function (name) {
+    id(name).checked = settings[name];
   });
 
-  id("sound").checked = settings.sound;
-  id("volume").value = settings.volume;
-  id("pattern").value = settings.pattern;
+  [
+    "volume",
+    "brightness",
+    "pattern",
+    "speed",
+    "ambient"
+  ].forEach(function (name) {
+    id(name).value = settings[name];
+  });
 
   function save() {
-    settings.sound = id("sound").checked;
-    settings.volume = Number(id("volume").value);
-    settings.pattern = id("pattern").value;
+    ["sound","chime"].forEach(function (name) {
+      settings[name] = id(name).checked;
+    });
+
+    settings.volume = clamp(
+      Number(id("volume").value),
+      0,
+      0.4
+    );
+
+    settings.brightness = clamp(
+      Number(id("brightness").value),
+      20,
+      100
+    );
+
+    ["pattern","speed","ambient"].forEach(function (name) {
+      settings[name] = id(name).value;
+    });
 
     try {
       localStorage.setItem(
@@ -1199,92 +1629,126 @@ window.ORIGINAL_CONTENT = {
 
     } catch (e) {
       id("save-status").textContent =
-        "Applied for now. This browser cannot remember settings.";
+        "Applied. This browser cannot remember settings.";
     }
 
-    colorLast = "";
+    id("brightness-value").textContent =
+      settings.brightness + "%";
+
+    ambientUntil = 0;
+    ambientColors = null;
+
+    if (
+      mode === "normal" &&
+      scene &&
+      scene.type === "ambient" &&
+      settings.ambient === "off"
+    ) {
+      sceneUntil = 0;
+    }
+
     tick();
   }
 
-  id("sound").onchange = save;
-  id("volume").onchange = save;
-  id("pattern").onchange = save;
+  [
+    "sound",
+    "chime",
+    "volume",
+    "brightness",
+    "pattern",
+    "speed",
+    "ambient"
+  ].forEach(function (name) {
+    id(name).onchange = save;
+  });
+
+  id("brightness").oninput = save;
+
+  id("brightness-value").textContent =
+    settings.brightness + "%";
 
   id("test-sound").onclick = function () {
-    try {
-      var AudioAPI =
-        window.AudioContext ||
-        window.webkitAudioContext;
-
-      if (!AudioAPI) {
+    unlock(function (ok) {
+      if (!ok) {
         id("save-status").textContent =
           "Audio is unavailable in this browser.";
+
         return;
       }
 
-      audio = audio || new AudioAPI();
+      if (period(new Date().getHours()) === "night") {
+        id("save-status").textContent =
+          "Quiet hours: sound is off until 6 AM.";
 
-      var resumed = audio.resume
-        ? audio.resume()
-        : null;
+      } else if (!settings.sound && !settings.chime) {
+        id("save-status").textContent =
+          "Enable flap sound or the timer chime first.";
 
-      function test() {
-        clickSound();
-
-        if (C.period(new Date().getHours()) === "night") {
-          id("save-status").textContent =
-            "Quiet hours: sound stays off until 6 AM.";
-        } else if (settings.sound) {
-          id("save-status").textContent =
-            "Test played. Check the tablet volume if you cannot hear it.";
-        } else {
-          id("save-status").textContent =
-            "Turn on sound to hear a test.";
-        }
-      }
-
-      if (resumed && resumed.then) {
-        resumed.then(test).catch(function () {
-          id("save-status").textContent =
-            "Audio could not start. Tap the display and try again.";
-        });
       } else {
-        test();
-      }
+        sound(!settings.sound);
 
-    } catch (e) {
-      id("save-status").textContent =
-        "Audio is unavailable in this browser.";
-    }
+        id("save-status").textContent =
+          "Test played. Check the tablet's media volume too.";
+      }
+    });
   };
 
 
   /* ===================================================
-     RESUME AND ROTATION EVENTS
+     KEYBOARD, RESIZE AND RESUME EVENTS
      =================================================== */
 
-  document.addEventListener(
-    "visibilitychange",
-    function () {
-      if (!document.hidden) {
-        size();
-        requestWake();
-        tick();
+  document.addEventListener("keydown", function (event) {
+    if (
+      event.key === "Escape" &&
+      id("settings").className !== "hidden"
+    ) {
+      closeSettings();
+    }
+
+    if (
+      event.key === "Tab" &&
+      id("settings").className !== "hidden"
+    ) {
+      var controls = id("settings")
+        .querySelectorAll("button,input,select");
+
+      var first = controls[0];
+      var last = controls[controls.length - 1];
+
+      if (
+        event.shiftKey &&
+        document.activeElement === first
+      ) {
+        event.preventDefault();
+        last.focus();
+
+      } else if (
+        !event.shiftKey &&
+        document.activeElement === last
+      ) {
+        event.preventDefault();
+        first.focus();
       }
+
+    } else if (event.key === "Tab") {
+      reveal();
     }
-  );
+  });
 
-  window.addEventListener(
-    "orientationchange",
-    function () {
-      setTimeout(size, 150);
+  window.addEventListener("resize", fit);
+
+  window.addEventListener("orientationchange", function () {
+    setTimeout(fit, 150);
+  });
+
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden) {
+      fit();
+      requestWake();
+      tick();
     }
-  );
-
-  requestWake();
-  tick();
-
-  setInterval(tick, 1000);
+  });
 
 
   /* Tiny position shift every five minutes. */
@@ -1292,35 +1756,43 @@ window.ORIGINAL_CONTENT = {
   var shift = 0;
 
   setInterval(function () {
-    var shifts = [
-      [0, 0],
-      [1, 0],
-      [0, 1],
-      [-1, 0],
-      [0, -1]
+    var positions = [
+      [0,0],
+      [1,0],
+      [0,1],
+      [-1,0],
+      [0,-1]
     ];
 
-    shift = (shift + 1) % shifts.length;
+    shift = (shift + 1) % positions.length;
 
     board.style.marginLeft =
-      shifts[shift][0] + "px";
+      positions[shift][0] + "px";
 
     board.style.marginTop =
-      shifts[shift][1] + "px";
+      positions[shift][1] + "px";
 
   }, 300000);
 
 
   /* ===================================================
+     START
+     =================================================== */
+
+  fit();
+  tick();
+  reveal();
+
+  setInterval(tick, 250);
+
+
+  /* ===================================================
      OPTIONAL OFFLINE SUPPORT
-     Requires sw.js beside index.html when hosted.
      =================================================== */
 
   if (location.protocol === "file:") {
     id("offline-status").textContent =
-      "Local file: the display works without internet.";
-
-    status("Local display · tap to start");
+      "Local file: no internet needed.";
 
   } else if (
     "serviceWorker" in navigator &&
@@ -1340,12 +1812,12 @@ window.ORIGINAL_CONTENT = {
       })
       .catch(function () {
         id("offline-status").textContent =
-          "Offline storage is unavailable. The open display still works; save index.html for a local copy.";
+          "Offline storage unavailable. This open display still works without internet.";
       });
 
   } else {
     id("offline-status").textContent =
-      "Offline caching is not available here. A saved index.html works as a local file where your browser allows it.";
+      "Offline reopening is not supported here. The open page still works offline.";
   }
 
 }());
