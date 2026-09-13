@@ -1,3254 +1,2842 @@
-<!DOCTYPE html>
-<html lang="en">
-
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
 <head>
-
-<meta charset="UTF-8">
-
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
->
-
-<meta
-  name="theme-color"
-  content="#080808"
->
-
-<title>Mini Vestaboard</title>
-
-
-<style>
-
-:root {
-
-  --board-bg: #080808;
-
-  --tile-top: #242424;
-
-  --tile-bottom: #171717;
-
-  --tile-text: #f1f0e9;
-
-  --gap: clamp(2px, 0.34vw, 6px);
-
-  --radius: clamp(2px, 0.30vw, 5px);
-
-}
-
-
-* {
-
-  box-sizing: border-box;
-
-}
-
-
-html,
-body {
-
-  width: 100%;
-
-  height: 100%;
-
-  margin: 0;
-
-  overflow: hidden;
-
-  background: var(--board-bg);
-
-  overscroll-behavior: none;
-
-  touch-action: manipulation;
-
-  -webkit-user-select: none;
-
-  user-select: none;
-
-}
-
-
-body {
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  font-family:
-    Arial,
-    Helvetica,
-    sans-serif;
-
-}
-
-
-#board-wrapper {
-
-  width: 100vw;
-
-  height: 100vh;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  padding:
-    2vh
-    1.5vw;
-
-  background:
-
-    radial-gradient(
-
-      circle at center,
-
-      #191919 0%,
-
-      #080808 76%
-
-    );
-
-}
-
-
-#board {
-
-  display: grid;
-
-  grid-template-columns:
-    repeat(
-      22,
-      minmax(0, 1fr)
-    );
-
-  grid-template-rows:
-    repeat(
-      6,
-      minmax(0, 1fr)
-    );
-
-  gap:
-    var(--gap);
-
-}
-
-
-.tile {
-
-  position: relative;
-
-  min-width: 0;
-
-  min-height: 0;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  overflow: hidden;
-
-  border-radius:
-    var(--radius);
-
-  background:
-
-    linear-gradient(
-
-      to bottom,
-
-      var(--tile-top) 0%,
-
-      #1c1c1c 48%,
-
-      #0c0c0c 49%,
-
-      #0c0c0c 51%,
-
-      #1a1a1a 52%,
-
-      var(--tile-bottom) 100%
-
-    );
-
-  box-shadow:
-
-    inset
-    0
-    1px
-    0
-    rgba(255,255,255,0.08),
-
-    inset
-    0
-    -2px
-    4px
-    rgba(0,0,0,0.9),
-
-    0
-    2px
-    3px
-    rgba(0,0,0,0.72);
-
-  color:
-    var(--tile-text);
-
-  font-family:
-
-    "Arial Narrow",
-
-    "Roboto Condensed",
-
-    Arial,
-
-    Helvetica,
-
-    sans-serif;
-
-  font-size:
-    clamp(
-      12px,
-      2.75vw,
-      34px
-    );
-
-  font-weight:
-    700;
-
-  line-height:
-    1;
-
-  text-align:
-    center;
-
-  text-shadow:
-
-    0
-    1px
-    2px
-    rgba(0,0,0,0.9);
-
-  transform:
-    translateZ(0);
-
-}
-
-
-.tile::after {
-
-  content: "";
-
-  position: absolute;
-
-  left: 0;
-
-  right: 0;
-
-  top: 50%;
-
-  height: 1px;
-
-  background:
-    rgba(
-      0,
-      0,
-      0,
-      0.96
-    );
-
-  box-shadow:
-
-    0
-    1px
-    0
-    rgba(
-      255,
-      255,
-      255,
-      0.04
-    );
-
-  pointer-events:
-    none;
-
-}
-
-
-.tile::before {
-
-  content: "";
-
-  position: absolute;
-
-  left: 4%;
-
-  right: 4%;
-
-  top:
-    calc(
-      50% - 1px
-    );
-
-  height: 3px;
-
-  border-left:
-
-    1px solid
-    rgba(
-      255,
-      255,
-      255,
-      0.06
-    );
-
-  border-right:
-
-    1px solid
-    rgba(
-      255,
-      255,
-      255,
-      0.06
-    );
-
-  pointer-events:
-    none;
-
-}
-
-
-.character {
-
-  position: relative;
-
-  z-index: 2;
-
-  transform:
-    translateY(-1%);
-
-}
-
-
-.flipping {
-
-  animation:
-
-    tileFlip
-
-    96ms
-
-    linear;
-
-}
-
-
-@keyframes tileFlip {
-
-  0% {
-
-    transform:
-
-      perspective(160px)
-
-      rotateX(0deg);
-
-    filter:
-      brightness(1);
-
-  }
-
-
-  50% {
-
-    transform:
-
-      perspective(160px)
-
-      rotateX(-58deg);
-
-    filter:
-      brightness(0.55);
-
-  }
-
-
-  100% {
-
-    transform:
-
-      perspective(160px)
-
-      rotateX(0deg);
-
-    filter:
-      brightness(1);
-
-  }
-
-}
-
-
-/* COLORED TILES */
-
-.tile.color-red {
-
-  background:
-    #b9413c
-    !important;
-
-}
-
-
-.tile.color-orange {
-
-  background:
-    #d46f31
-    !important;
-
-}
-
-
-.tile.color-yellow {
-
-  background:
-    #d6b43d
-    !important;
-
-}
-
-
-.tile.color-green {
-
-  background:
-    #4f8c56
-    !important;
-
-}
-
-
-.tile.color-blue {
-
-  background:
-    #3d79a5
-    !important;
-
-}
-
-
-.tile.color-purple {
-
-  background:
-    #73599a
-    !important;
-
-}
-
-
-.tile.color-white {
-
-  background:
-    #d9d6cb
-    !important;
-
-}
-
-
-.tile.color-red .character,
-.tile.color-orange .character,
-.tile.color-yellow .character,
-.tile.color-green .character,
-.tile.color-blue .character,
-.tile.color-purple .character,
-.tile.color-white .character {
-
-  color:
-    transparent;
-
-  text-shadow:
-    none;
-
-}
-
-
-/* FULLSCREEN HINT */
-
-#tap-hint {
-
-  position: fixed;
-
-  left: 50%;
-
-  bottom:
-
-    max(
-      10px,
-      env(
-        safe-area-inset-bottom
-      )
-    );
-
-  transform:
-    translateX(-50%);
-
-  z-index:
-    10;
-
-  padding:
-    6px
-    10px;
-
-  border-radius:
-    999px;
-
-  background:
-    rgba(
-      0,
-      0,
-      0,
-      0.54
-    );
-
-  color:
-    rgba(
-      255,
-      255,
-      255,
-      0.66
-    );
-
-  font:
-
-    12px/1
-
-    Arial,
-
-    Helvetica,
-
-    sans-serif;
-
-  opacity:
-    0;
-
-  pointer-events:
-    none;
-
-  transition:
-    opacity
-    180ms
-    ease;
-
-}
-
-
-#tap-hint.show {
-
-  opacity:
-    1;
-
-}
-
-
-@media
-(prefers-reduced-motion: reduce) {
-
-  .flipping {
-
-    animation:
-      none;
-
-  }
-
-}
-
-</style>
-
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2575.7">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
 </head>
-
-
 <body>
-
-
-<div id="board-wrapper">
-
-  <div
-    id="board"
-    aria-label="Mini split-flap display"
-  ></div>
-
-</div>
-
-
-<div id="tap-hint">
-
-  Tap once for fullscreen
-
-</div>
-
-
-
-<script>
-
-"use strict";
-
-
-/* =========================================================
-
-   MINI VESTABOARD
-   FIRE HD 8 EDITION
-
-   22 COLUMNS
-   6 ROWS
-
-   22 × 6 = 132 TILES
-
-   ========================================================= */
-
-
-const ROWS =
-  6;
-
-
-const COLUMNS =
-  22;
-
-
-const TILE_COUNT =
-  ROWS * COLUMNS;
-
-
-
-/*
-   Board shape.
-
-   The Fire HD 8 screen is wider than
-   a traditional picture frame.
-
-   This keeps our board proportions
-   looking more like a real split-flap
-   display.
-*/
-
-const BOARD_ASPECT =
-  1.87;
-
-
-
-/*
-   Animation settings.
-*/
-
-const FLIP_SPEED_MS =
-  62;
-
-
-const MIN_FLIPS =
-  3;
-
-
-const EXTRA_FLIPS =
-  4;
-
-
-const FLIP_CHARACTERS =
-
-  "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!?$#@&+-";
-
-
-
-/*
-   Show:
-
-   "Tap once for fullscreen"
-
-   for a few seconds when the
-   page starts.
-*/
-
-const SHOW_FULLSCREEN_HINT =
-  true;
-
-
-
-/* =========================================================
-
-   YOUR SCREENS
-
-   THIS IS THE SECTION YOU WILL
-   EDIT MOST OFTEN.
-
-   Each screen can contain:
-
-   duration
-   lines
-   colored tiles
-
-   Maximum:
-
-   6 rows
-   22 characters per row
-
-   Text automatically centers.
-
-   ========================================================= */
-
-
-const scenes = [
-
-
-  /* SCREEN 1 */
-
-  {
-
-    duration:
-      14,
-
-
-    lines: [
-
-      "",
-
-      "GOOD MORNING",
-
-      "",
-
-      "HAVE A GREAT DAY",
-
-      "",
-
-      ""
-
-    ]
-
-  },
-
-
-
-  /* SCREEN 2 */
-
-  {
-
-    duration:
-      12,
-
-
-    lines: [
-
-      "",
-
-      "",
-
-      "WELCOME HOME",
-
-      "",
-
-      "",
-
-      ""
-
-    ],
-
-
-    /*
-       Colored corners.
-
-       Row numbers:
-       0 through 5
-
-       Column numbers:
-       0 through 21
-    */
-
-    colors: [
-
-      {
-        row: 0,
-        col: 0,
-        color: "yellow"
-      },
-
-      {
-        row: 0,
-        col: 21,
-        color: "yellow"
-      },
-
-      {
-        row: 5,
-        col: 0,
-        color: "yellow"
-      },
-
-      {
-        row: 5,
-        col: 21,
-        color: "yellow"
-      }
-
-    ]
-
-  },
-
-
-
-  /* SCREEN 3 */
-
-  {
-
-    duration:
-      12,
-
-
-    lines: [
-
-      "",
-
-      "MAKE TODAY",
-
-      "",
-
-      "COUNT",
-
-      "",
-
-      ""
-
-    ]
-
-  },
-
-
-
-  /*
-     SCREEN 4
-
-     Automatically displays
-     the current:
-
-     DAY
-     DATE
-     TIME
-  */
-
-  {
-
-    duration:
-      12,
-
-
-    dynamic:
-      buildDateTimeScene
-
-  }
-
-
-];
-
-
-
-/* =========================================================
-
-   OPTIONAL DAILY SCHEDULING
-
-   DEFAULT:
-
-   false
-
-   Leave this false for now.
-
-   When false, the board rotates
-   normally through the screens above.
-
-   ========================================================= */
-
-
-const ENABLE_SCHEDULE =
-  false;
-
-
-
-/*
-   Later you can change:
-
-   false
-
-   to:
-
-   true
-
-   and the board can select screens
-   depending on the time of day.
-
-   Times use 24-hour format.
-*/
-
-
-const schedule = [
-
-
-  {
-
-    start:
-      "06:00",
-
-    end:
-      "11:59",
-
-    scene:
-      0
-
-  },
-
-
-  {
-
-    start:
-      "17:00",
-
-    end:
-      "23:59",
-
-    scene:
-      1
-
-  }
-
-
-];
-
-
-
-/* =========================================================
-
-   AVAILABLE TILE COLORS
-
-   ========================================================= */
-
-
-const VALID_COLORS =
-
-  new Set([
-
-    "red",
-
-    "orange",
-
-    "yellow",
-
-    "green",
-
-    "blue",
-
-    "purple",
-
-    "white"
-
-  ]);
-
-
-
-const COLOR_CLASSES =
-
-  Array
-    .from(
-      VALID_COLORS
-    )
-    .map(
-
-      function (color) {
-
-        return (
-          "color-"
-          +
-          color
-        );
-
-      }
-
-    );
-
-
-
-/* =========================================================
-
-   INTERNAL VARIABLES
-
-   You normally do NOT need
-   to edit anything below here.
-
-   ========================================================= */
-
-
-const board =
-
-  document
-    .getElementById(
-      "board"
-    );
-
-
-
-const tapHint =
-
-  document
-    .getElementById(
-      "tap-hint"
-    );
-
-
-
-const tiles =
-  [];
-
-
-
-let playlistIndex =
-  0;
-
-
-
-let sceneTimer =
-  null;
-
-
-
-let animationGeneration =
-  0;
-
-
-
-let wakeLock =
-  null;
-
-
-
-let hintTimer =
-  null;
-
-
-
-/* =========================================================
-
-   CREATE 132 TILES
-
-   ========================================================= */
-
-
-function createBoard() {
-
-
-  const fragment =
-
-    document
-      .createDocumentFragment();
-
-
-  for (
-
-    let i = 0;
-
-    i < TILE_COUNT;
-
-    i++
-
-  ) {
-
-
-    const tile =
-
-      document
-        .createElement(
-          "div"
-        );
-
-
-    tile.className =
-      "tile";
-
-
-
-    const character =
-
-      document
-        .createElement(
-          "span"
-        );
-
-
-    character.className =
-      "character";
-
-
-    character.textContent =
-      " ";
-
-
-
-    tile.appendChild(
-      character
-    );
-
-
-    fragment.appendChild(
-      tile
-    );
-
-
-
-    tiles.push({
-
-      tile:
-        tile,
-
-      character:
-        character
-
-    });
-
-
-  }
-
-
-
-  board.appendChild(
-    fragment
-  );
-
-
-}
-
-
-
-/* =========================================================
-
-   FIT BOARD TO SCREEN
-
-   ========================================================= */
-
-
-function fitBoard() {
-
-
-  const maxWidth =
-
-    Math.max(
-
-      1,
-
-      window.innerWidth
-      *
-      0.96
-
-    );
-
-
-
-  const maxHeight =
-
-    Math.max(
-
-      1,
-
-      window.innerHeight
-      *
-      0.92
-
-    );
-
-
-
-  let width =
-    maxWidth;
-
-
-
-  let height =
-
-    width
-    /
-    BOARD_ASPECT;
-
-
-
-  if (
-    height > maxHeight
-  ) {
-
-
-    height =
-      maxHeight;
-
-
-    width =
-
-      height
-      *
-      BOARD_ASPECT;
-
-
-  }
-
-
-
-  board.style.width =
-
-    Math.floor(
-      width
-    )
-    +
-    "px";
-
-
-
-  board.style.height =
-
-    Math.floor(
-      height
-    )
-    +
-    "px";
-
-
-}
-
-
-
-/* =========================================================
-
-   CLEAN UP TEXT
-
-   ========================================================= */
-
-
-function normalizeText(
-  value
-) {
-
-
-  return String(
-
-    value == null
-      ?
-      ""
-      :
-      value
-
-  )
-
-    .replace(
-
-      /[\u2018\u2019]/g,
-
-      "'"
-
-    )
-
-    .replace(
-
-      /[\u201C\u201D]/g,
-
-      '"'
-
-    )
-
-    .toUpperCase()
-
-    .slice(
-
-      0,
-
-      COLUMNS
-
-    );
-
-
-}
-
-
-
-/* =========================================================
-
-   CENTER ONE LINE
-
-   ========================================================= */
-
-
-function centerText(
-  value
-) {
-
-
-  const text =
-
-    normalizeText(
-      value
-    );
-
-
-
-  const remaining =
-
-    COLUMNS
-    -
-    text.length;
-
-
-
-  const left =
-
-    Math.floor(
-
-      remaining
-      /
-      2
-
-    );
-
-
-
-  const right =
-
-    remaining
-    -
-    left;
-
-
-
-  return (
-
-    " ".repeat(
-      left
-    )
-
-    +
-
-    text
-
-    +
-
-    " ".repeat(
-      right
-    )
-
-  );
-
-
-}
-
-
-
-/* =========================================================
-
-   TURN 6 LINES INTO 132 POSITIONS
-
-   ========================================================= */
-
-
-function formatLines(
-  lines
-) {
-
-
-  const output =
-    [];
-
-
-
-  for (
-
-    let row = 0;
-
-    row < ROWS;
-
-    row++
-
-  ) {
-
-
-    let currentLine =
-      "";
-
-
-
-    if (
-
-      lines
-
-      &&
-
-      lines[row] != null
-
-    ) {
-
-
-      currentLine =
-        lines[row];
-
-
-    }
-
-
-
-    const centered =
-
-      centerText(
-        currentLine
-      );
-
-
-
-    const characters =
-
-      centered.split(
-        ""
-      );
-
-
-
-    for (
-
-      let i = 0;
-
-      i < characters.length;
-
-      i++
-
-    ) {
-
-
-      output.push(
-        characters[i]
-      );
-
-
-    }
-
-
-  }
-
-
-
-  /*
-     Safety check.
-
-     Every valid screen must
-     always contain exactly
-     132 positions.
-  */
-
-  if (
-
-    output.length
-    !==
-    TILE_COUNT
-
-  ) {
-
-
-    throw new Error(
-
-      "Internal formatting error. "
-
-      +
-
-      "Expected "
-
-      +
-
-      TILE_COUNT
-
-      +
-
-      " tiles but received "
-
-      +
-
-      output.length
-
-      +
-
-      "."
-
-    );
-
-
-  }
-
-
-
-  return output;
-
-
-}
-
-
-
-/* =========================================================
-
-   LIVE DATE + TIME SCREEN
-
-   ========================================================= */
-
-
-function buildDateTimeScene() {
-
-
-  const now =
-    new Date();
-
-
-
-  const weekday =
-
-    new Intl.DateTimeFormat(
-
-      "en-US",
-
-      {
-
-        weekday:
-          "long"
-
-      }
-
-    )
-      .format(
-        now
-      );
-
-
-
-  const date =
-
-    new Intl.DateTimeFormat(
-
-      "en-US",
-
-      {
-
-        month:
-          "long",
-
-        day:
-          "numeric"
-
-      }
-
-    )
-      .format(
-        now
-      );
-
-
-
-  const time =
-
-    new Intl.DateTimeFormat(
-
-      "en-US",
-
-      {
-
-        hour:
-          "numeric",
-
-        minute:
-          "2-digit"
-
-      }
-
-    )
-      .format(
-        now
-      );
-
-
-
-  return [
-
-    "",
-
-    weekday,
-
-    date,
-
-    "",
-
-    time,
-
-    ""
-
-  ];
-
-
-}
-
-
-
-/* =========================================================
-
-   CLEAR COLOR TILES
-
-   ========================================================= */
-
-
-function clearColors() {
-
-
-  for (
-
-    let i = 0;
-
-    i < tiles.length;
-
-    i++
-
-  ) {
-
-
-    tiles[i]
-      .tile
-      .classList
-      .remove
-      .apply(
-
-        tiles[i].tile.classList,
-
-        COLOR_CLASSES
-
-      );
-
-
-  }
-
-
-}
-
-
-
-/* =========================================================
-
-   APPLY COLOR TILES
-
-   ========================================================= */
-
-
-function applyColors(
-  colors
-) {
-
-
-  clearColors();
-
-
-
-  if (
-    !Array.isArray(
-      colors
-    )
-  ) {
-
-    return;
-
-  }
-
-
-
-  for (
-
-    let i = 0;
-
-    i < colors.length;
-
-    i++
-
-  ) {
-
-
-    const entry =
-      colors[i];
-
-
-
-    const row =
-
-      Number(
-
-        entry
-        &&
-        entry.row
-
-      );
-
-
-
-    const col =
-
-      Number(
-
-        entry
-        &&
-        entry.col
-
-      );
-
-
-
-    const color =
-
-      String(
-
-        (
-          entry
-          &&
-          entry.color
-        )
-
-        ||
-
-        ""
-
-      )
-        .toLowerCase();
-
-
-
-    if (
-
-      !Number.isInteger(
-        row
-      )
-
-      ||
-
-      !Number.isInteger(
-        col
-      )
-
-    ) {
-
-      continue;
-
-    }
-
-
-
-    if (
-
-      row < 0
-
-      ||
-
-      row >= ROWS
-
-      ||
-
-      col < 0
-
-      ||
-
-      col >= COLUMNS
-
-    ) {
-
-      continue;
-
-    }
-
-
-
-    if (
-
-      !VALID_COLORS.has(
-        color
-      )
-
-    ) {
-
-      continue;
-
-    }
-
-
-
-    const index =
-
-      row
-      *
-      COLUMNS
-      +
-      col;
-
-
-
-    tiles[index]
-      .tile
-      .classList
-      .add(
-
-        "color-"
-        +
-        color
-
-      );
-
-
-  }
-
-
-}
-
-
-
-/* =========================================================
-
-   RANDOM FLIPPING CHARACTER
-
-   ========================================================= */
-
-
-function randomFlipCharacter() {
-
-
-  const position =
-
-    Math.floor(
-
-      Math.random()
-
-      *
-
-      FLIP_CHARACTERS.length
-
-    );
-
-
-
-  return (
-
-    FLIP_CHARACTERS[
-      position
-    ]
-
-  );
-
-
-}
-
-
-
-/* =========================================================
-
-   ANIMATE ONE TILE
-
-   ========================================================= */
-
-
-function animateTile(
-
-  index,
-
-  finalCharacter,
-
-  delay,
-
-  generation
-
-) {
-
-
-  const item =
-    tiles[index];
-
-
-
-  if (
-    !item
-  ) {
-
-    return;
-
-  }
-
-
-
-  /*
-     If this tile already displays
-     the correct character,
-     don't wastefully animate it.
-  */
-
-  if (
-
-    item
-      .character
-      .textContent
-
-    ===
-
-    finalCharacter
-
-  ) {
-
-    return;
-
-  }
-
-
-
-  window.setTimeout(
-
-    function () {
-
-
-      /*
-         Stop old animations if
-         a newer screen started.
-      */
-
-      if (
-
-        generation
-
-        !==
-
-        animationGeneration
-
-      ) {
-
-        return;
-
-      }
-
-
-
-      const totalFlips =
-
-        MIN_FLIPS
-
-        +
-
-        Math.floor(
-
-          Math.random()
-
-          *
-
-          (
-            EXTRA_FLIPS
-            +
-            1
-          )
-
-        );
-
-
-
-      let flipCount =
-        0;
-
-
-
-      const interval =
-
-        window.setInterval(
-
-          function () {
-
-
-            if (
-
-              generation
-
-              !==
-
-              animationGeneration
-
-            ) {
-
-
-              window.clearInterval(
-                interval
-              );
-
-
-              return;
-
-
-            }
-
-
-
-            item
-              .tile
-              .classList
-              .remove(
-                "flipping"
-              );
-
-
-
-            /*
-               Forces browser to restart
-               the animation.
-            */
-
-            void item
-              .tile
-              .offsetWidth;
-
-
-
-            item
-              .tile
-              .classList
-              .add(
-                "flipping"
-              );
-
-
-
-            flipCount++;
-
-
-
-            if (
-
-              flipCount
-              >=
-              totalFlips
-
-            ) {
-
-
-              window.clearInterval(
-                interval
-              );
-
-
-
-              item
-                .character
-                .textContent =
-
-                  finalCharacter;
-
-
-
-              item
-                .tile
-                .classList
-                .remove(
-                  "flipping"
-                );
-
-
-
-              return;
-
-
-            }
-
-
-
-            item
-              .character
-              .textContent =
-
-                randomFlipCharacter();
-
-
-
-          },
-
-          FLIP_SPEED_MS
-
-        );
-
-
-    },
-
-    delay
-
-  );
-
-
-}
-
-
-
-/* =========================================================
-
-   GET SCREEN CONTENT
-
-   ========================================================= */
-
-
-function resolveSceneLines(
-  scene
-) {
-
-
-  if (
-
-    scene
-
-    &&
-
-    typeof scene.dynamic
-    ===
-    "function"
-
-  ) {
-
-
-    const result =
-
-      scene.dynamic();
-
-
-
-    if (
-      Array.isArray(
-        result
-      )
-    ) {
-
-      return result;
-
-    }
-
-
-
-    return [];
-
-
-  }
-
-
-
-  if (
-
-    scene
-
-    &&
-
-    Array.isArray(
-      scene.lines
-    )
-
-  ) {
-
-
-    return scene.lines;
-
-
-  }
-
-
-
-  return [];
-
-
-}
-
-
-
-/* =========================================================
-
-   DISPLAY ONE SCREEN
-
-   ========================================================= */
-
-
-function displayScene(
-  scene
-) {
-
-
-  if (
-    !scene
-  ) {
-
-    return;
-
-  }
-
-
-
-  animationGeneration++;
-
-
-
-  const generation =
-    animationGeneration;
-
-
-
-  const formatted =
-
-    formatLines(
-
-      resolveSceneLines(
-        scene
-      )
-
-    );
-
-
-
-  applyColors(
-    scene.colors
-  );
-
-
-
-  for (
-
-    let index = 0;
-
-    index < formatted.length;
-
-    index++
-
-  ) {
-
-
-    const character =
-      formatted[index];
-
-
-
-    const row =
-
-      Math.floor(
-
-        index
-        /
-        COLUMNS
-
-      );
-
-
-
-    const col =
-
-      index
-      %
-      COLUMNS;
-
-
-
-    /*
-       Slightly stagger each tile
-       to create the mechanical
-       ripple effect.
-    */
-
-    const delay =
-
-      col * 11
-
-      +
-
-      row * 33
-
-      +
-
-      Math.random() * 70;
-
-
-
-    animateTile(
-
-      index,
-
-      character,
-
-      delay,
-
-      generation
-
-    );
-
-
-  }
-
-
-}
-
-
-
-/* =========================================================
-
-   CONVERT 24-HOUR TIME TO MINUTES
-
-   ========================================================= */
-
-
-function minutesFromTimeString(
-  timeString
-) {
-
-
-  const value =
-
-    String(
-
-      timeString == null
-        ?
-        ""
-        :
-        timeString
-
-    );
-
-
-
-  const match =
-
-    /^(\d{2}):(\d{2})$/
-      .exec(
-        value
-      );
-
-
-
-  if (
-    !match
-  ) {
-
-    return null;
-
-  }
-
-
-
-  const hour =
-
-    Number(
-      match[1]
-    );
-
-
-
-  const minute =
-
-    Number(
-      match[2]
-    );
-
-
-
-  if (
-
-    hour < 0
-
-    ||
-
-    hour > 23
-
-    ||
-
-    minute < 0
-
-    ||
-
-    minute > 59
-
-  ) {
-
-    return null;
-
-  }
-
-
-
-  return (
-
-    hour * 60
-
-    +
-
-    minute
-
-  );
-
-
-}
-
-
-
-/* =========================================================
-
-   CHECK DAILY SCHEDULE
-
-   ========================================================= */
-
-
-function getScheduledSceneIndex() {
-
-
-  if (
-    !ENABLE_SCHEDULE
-  ) {
-
-    return null;
-
-  }
-
-
-
-  const now =
-    new Date();
-
-
-
-  const current =
-
-    now.getHours() * 60
-
-    +
-
-    now.getMinutes();
-
-
-
-  for (
-
-    let i = 0;
-
-    i < schedule.length;
-
-    i++
-
-  ) {
-
-
-    const rule =
-      schedule[i];
-
-
-
-    const start =
-
-      minutesFromTimeString(
-        rule.start
-      );
-
-
-
-    const end =
-
-      minutesFromTimeString(
-        rule.end
-      );
-
-
-
-    const sceneIndex =
-
-      Number(
-        rule.scene
-      );
-
-
-
-    if (
-
-      start === null
-
-      ||
-
-      end === null
-
-    ) {
-
-      continue;
-
-    }
-
-
-
-    if (
-
-      !Number.isInteger(
-        sceneIndex
-      )
-
-      ||
-
-      !scenes[
-        sceneIndex
-      ]
-
-    ) {
-
-      continue;
-
-    }
-
-
-
-    let matches =
-      false;
-
-
-
-    /*
-       Normal window:
-
-       06:00 → 11:59
-    */
-
-    if (
-      start <= end
-    ) {
-
-
-      matches =
-
-        current >= start
-
-        &&
-
-        current <= end;
-
-
-    }
-
-
-    /*
-       Overnight window:
-
-       22:00 → 06:00
-    */
-
-    else {
-
-
-      matches =
-
-        current >= start
-
-        ||
-
-        current <= end;
-
-
-    }
-
-
-
-    if (
-      matches
-    ) {
-
-      return sceneIndex;
-
-    }
-
-
-  }
-
-
-
-  return null;
-
-
-}
-
-
-
-/* =========================================================
-
-   PLAY NEXT SCREEN
-
-   ========================================================= */
-
-
-function playNextScene() {
-
-
-  if (
-    sceneTimer !== null
-  ) {
-
-
-    window.clearTimeout(
-      sceneTimer
-    );
-
-
-    sceneTimer =
-      null;
-
-
-  }
-
-
-
-  if (
-    scenes.length === 0
-  ) {
-
-    return;
-
-  }
-
-
-
-  const scheduledIndex =
-
-    getScheduledSceneIndex();
-
-
-
-  let scene;
-
-
-
-  if (
-    scheduledIndex !== null
-  ) {
-
-
-    scene =
-
-      scenes[
-        scheduledIndex
-      ];
-
-
-  }
-
-
-  else {
-
-
-    scene =
-
-      scenes[
-        playlistIndex
-      ];
-
-
-
-    playlistIndex =
-
-      (
-        playlistIndex
-        +
-        1
-      )
-
-      %
-
-      scenes.length;
-
-
-  }
-
-
-
-  displayScene(
-    scene
-  );
-
-
-
-  let durationSeconds =
-
-    Number(
-      scene.duration
-    );
-
-
-
-  if (
-
-    !Number.isFinite(
-      durationSeconds
-    )
-
-    ||
-
-    durationSeconds < 2
-
-  ) {
-
-
-    durationSeconds =
-      12;
-
-
-  }
-
-
-
-  sceneTimer =
-
-    window.setTimeout(
-
-      playNextScene,
-
-      durationSeconds
-      *
-      1000
-
-    );
-
-
-}
-
-
-
-/* =========================================================
-
-   FULLSCREEN
-
-   ========================================================= */
-
-
-function enterFullscreen() {
-
-
-  const element =
-
-    document
-      .documentElement;
-
-
-
-  /*
-     Already fullscreen.
-  */
-
-  if (
-    document.fullscreenElement
-  ) {
-
-    return;
-
-  }
-
-
-
-  /*
-     Standard fullscreen API.
-  */
-
-  if (
-
-    typeof element.requestFullscreen
-
-    ===
-
-    "function"
-
-  ) {
-
-
-    try {
-
-
-      const result =
-
-        element.requestFullscreen();
-
-
-
-      if (
-
-        result
-
-        &&
-
-        typeof result.then
-        ===
-        "function"
-
-      ) {
-
-
-        result.then(
-
-          function () {
-
-            hideFullscreenHint();
-
-          }
-
-        )
-        .catch(
-
-          function () {
-
-            /*
-               Fullscreen is optional.
-            */
-
-          }
-
-        );
-
-
-      }
-
-
-      else {
-
-
-        hideFullscreenHint();
-
-
-      }
-
-
-    }
-
-
-    catch (error) {
-
-
-      /*
-         Ignore fullscreen errors.
-      */
-
-
-    }
-
-
-
-    return;
-
-
-  }
-
-
-
-  /*
-     WebKit fallback.
-
-     Helpful for some versions
-     of Silk/WebKit browsers.
-  */
-
-  if (
-
-    typeof element.webkitRequestFullscreen
-
-    ===
-
-    "function"
-
-  ) {
-
-
-    try {
-
-
-      element
-        .webkitRequestFullscreen();
-
-
-      hideFullscreenHint();
-
-
-    }
-
-
-    catch (error) {
-
-
-      /*
-         Display continues normally.
-      */
-
-
-    }
-
-
-  }
-
-
-}
-
-
-
-/* =========================================================
-
-   FULLSCREEN HINT
-
-   ========================================================= */
-
-
-function showFullscreenHint() {
-
-
-  if (
-
-    !SHOW_FULLSCREEN_HINT
-
-    ||
-
-    !tapHint
-
-  ) {
-
-    return;
-
-  }
-
-
-
-  tapHint
-    .classList
-    .add(
-      "show"
-    );
-
-
-
-  window.clearTimeout(
-    hintTimer
-  );
-
-
-
-  hintTimer =
-
-    window.setTimeout(
-
-      hideFullscreenHint,
-
-      4500
-
-    );
-
-
-}
-
-
-
-function hideFullscreenHint() {
-
-
-  if (
-    !tapHint
-  ) {
-
-    return;
-
-  }
-
-
-
-  tapHint
-    .classList
-    .remove(
-      "show"
-    );
-
-
-
-  window.clearTimeout(
-    hintTimer
-  );
-
-
-}
-
-
-
-/* =========================================================
-
-   WAKE LOCK
-
-   Keeps display awake if browser
-   supports this feature.
-
-   If Silk doesn't support it,
-   nothing else breaks.
-
-   ========================================================= */
-
-
-function requestWakeLock() {
-
-
-  if (
-
-    !navigator
-
-    ||
-
-    !navigator.wakeLock
-
-    ||
-
-    typeof navigator.wakeLock.request
-    !==
-    "function"
-
-  ) {
-
-    return;
-
-  }
-
-
-
-  if (
-
-    wakeLock
-
-    &&
-
-    wakeLock.released === false
-
-  ) {
-
-    return;
-
-  }
-
-
-
-  navigator
-    .wakeLock
-    .request(
-      "screen"
-    )
-
-    .then(
-
-      function (lock) {
-
-
-        wakeLock =
-          lock;
-
-
-
-        if (
-
-          wakeLock
-
-          &&
-
-          typeof wakeLock.addEventListener
-          ===
-          "function"
-
-        ) {
-
-
-          wakeLock
-            .addEventListener(
-
-              "release",
-
-              function () {
-
-                wakeLock =
-                  null;
-
-              }
-
-            );
-
-
-        }
-
-
-      }
-
-    )
-
-    .catch(
-
-      function () {
-
-
-        /*
-           Optional feature.
-
-           The board continues
-           normally if unavailable.
-        */
-
-
-      }
-
-    );
-
-
-}
-
-
-
-/* =========================================================
-
-   START APP
-
-   ========================================================= */
-
-
-function startApp() {
-
-
-  createBoard();
-
-
-  fitBoard();
-
-
-  playNextScene();
-
-
-  requestWakeLock();
-
-
-  showFullscreenHint();
-
-
-}
-
-
-
-/* =========================================================
-
-   WINDOW RESIZE
-
-   ========================================================= */
-
-
-window.addEventListener(
-
-  "resize",
-
-  function () {
-
-    fitBoard();
-
-  }
-
-);
-
-
-
-/* =========================================================
-
-   SCREEN ROTATION
-
-   ========================================================= */
-
-
-window.addEventListener(
-
-  "orientationchange",
-
-  function () {
-
-
-    window.setTimeout(
-
-      function () {
-
-        fitBoard();
-
-      },
-
-      150
-
-    );
-
-
-  }
-
-);
-
-
-
-/* =========================================================
-
-   TAP SCREEN FOR FULLSCREEN
-
-   ========================================================= */
-
-
-document.addEventListener(
-
-  "click",
-
-  function () {
-
-    enterFullscreen();
-
-  }
-
-);
-
-
-
-/* =========================================================
-
-   WHEN RETURNING TO PAGE
-
-   ========================================================= */
-
-
-document.addEventListener(
-
-  "visibilitychange",
-
-  function () {
-
-
-    if (
-
-      document.visibilityState
-
-      ===
-
-      "visible"
-
-    ) {
-
-
-      fitBoard();
-
-
-      requestWakeLock();
-
-
-    }
-
-
-  }
-
-);
-
-
-
-/* =========================================================
-
-   GO
-
-   ========================================================= */
-
-
-startApp();
-
-
-</script>
-
-
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="en"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;meta charset="UTF-8"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;meta</p>
+<p class="p1"><span class="Apple-converted-space">  </span>name="viewport"</p>
+<p class="p1"><span class="Apple-converted-space">  </span>content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"</p>
+<p class="p1">&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;meta</p>
+<p class="p1"><span class="Apple-converted-space">  </span>name="theme-color"</p>
+<p class="p1"><span class="Apple-converted-space">  </span>content="#080808"</p>
+<p class="p1">&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;title&gt;Mini Vestaboard&lt;/title&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;style&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">:root {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>--board-bg: #080808;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>--tile-top: #242424;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>--tile-bottom: #171717;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>--tile-text: #f1f0e9;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>--gap: clamp(2px, .34vw, 6px);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>--radius: clamp(2px, .30vw, 5px);</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">* {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>box-sizing: border-box;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">html,</p>
+<p class="p1">body {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>height: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>margin: 0;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>overflow: hidden;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>background: var(--board-bg);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>overscroll-behavior: none;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>touch-action: manipulation;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>-webkit-user-select: none;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>user-select: none;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>cursor: none;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">body {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>justify-content: center;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>font-family: Arial, Helvetica, sans-serif;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>transition: filter .5s ease;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">body.night-dim {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>filter: brightness(.58);</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">#board-wrapper {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>width: 100vw;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>height: 100vh;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>justify-content: center;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>padding: 2vh 1.5vw;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>background:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>radial-gradient(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>circle at center,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>#191919 0%,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>#080808 76%</p>
+<p class="p1"><span class="Apple-converted-space">    </span>);</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">#board {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>display: grid;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>grid-template-columns:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>repeat(22, minmax(0, 1fr));</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>grid-template-rows:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>repeat(6, minmax(0, 1fr));</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>gap: var(--gap);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>transition:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>transform 1s ease;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">.tile {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>position: relative;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>min-width: 0;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>min-height: 0;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>justify-content: center;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>overflow: hidden;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>border-radius:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>var(--radius);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>background:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>linear-gradient(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>to bottom,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var(--tile-top) 0%,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>#1c1c1c 48%,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>#0c0c0c 49%,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>#0c0c0c 51%,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>#1a1a1a 52%,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var(--tile-bottom) 100%</p>
+<p class="p1"><span class="Apple-converted-space">    </span>);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>box-shadow:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>inset 0 1px 0 rgba(255,255,255,.08),</p>
+<p class="p1"><span class="Apple-converted-space">    </span>inset 0 -2px 4px rgba(0,0,0,.9),</p>
+<p class="p1"><span class="Apple-converted-space">    </span>0 2px 3px rgba(0,0,0,.72);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>color:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>var(--tile-text);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>font-family:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"Arial Narrow",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"Roboto Condensed",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>Arial,</p>
+<p class="p1"><span class="Apple-converted-space">    </span>Helvetica,</p>
+<p class="p1"><span class="Apple-converted-space">    </span>sans-serif;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>font-size:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>clamp(12px, 2.75vw, 34px);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>font-weight:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>700;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>line-height:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>1;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>text-align:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>center;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>text-shadow:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>0 1px 2px rgba(0,0,0,.9);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>transform:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>translateZ(0);</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">.tile::after {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>content: "";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>position: absolute;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>left: 0;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>right: 0;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>top: 50%;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>height: 1px;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>background:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>rgba(0,0,0,.96);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>box-shadow:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>0 1px 0 rgba(255,255,255,.04);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>pointer-events:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>none;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">.tile::before {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>content: "";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>position: absolute;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>left: 4%;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>right: 4%;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>top:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>calc(50% - 1px);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>height: 3px;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>border-left:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>1px solid rgba(255,255,255,.06);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>border-right:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>1px solid rgba(255,255,255,.06);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>pointer-events:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>none;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">.character {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>position: relative;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>z-index: 2;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>transform:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>translateY(-1%);</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">.flipping {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>animation:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>tileFlip</p>
+<p class="p1"><span class="Apple-converted-space">    </span>96ms</p>
+<p class="p1"><span class="Apple-converted-space">    </span>linear;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">@keyframes tileFlip {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>0% {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>transform:</p>
+<p class="p1"><span class="Apple-converted-space">      </span>perspective(160px)</p>
+<p class="p1"><span class="Apple-converted-space">      </span>rotateX(0deg);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>filter:</p>
+<p class="p1"><span class="Apple-converted-space">      </span>brightness(1);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>50% {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>transform:</p>
+<p class="p1"><span class="Apple-converted-space">      </span>perspective(160px)</p>
+<p class="p1"><span class="Apple-converted-space">      </span>rotateX(-58deg);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>filter:</p>
+<p class="p1"><span class="Apple-converted-space">      </span>brightness(.55);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>100% {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>transform:</p>
+<p class="p1"><span class="Apple-converted-space">      </span>perspective(160px)</p>
+<p class="p1"><span class="Apple-converted-space">      </span>rotateX(0deg);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>filter:</p>
+<p class="p1"><span class="Apple-converted-space">      </span>brightness(1);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* COLOR TILES */</p>
+<p class="p2"><br></p>
+<p class="p1">.tile.color-red {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>background: #b9413c !important;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">.tile.color-orange {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>background: #d46f31 !important;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">.tile.color-yellow {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>background: #d6b43d !important;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">.tile.color-green {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>background: #4f8c56 !important;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">.tile.color-blue {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>background: #3d79a5 !important;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">.tile.color-purple {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>background: #73599a !important;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">.tile.color-white {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>background: #d9d6cb !important;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">.tile.color-red .character,</p>
+<p class="p1">.tile.color-orange .character,</p>
+<p class="p1">.tile.color-yellow .character,</p>
+<p class="p1">.tile.color-green .character,</p>
+<p class="p1">.tile.color-blue .character,</p>
+<p class="p1">.tile.color-purple .character,</p>
+<p class="p1">.tile.color-white .character {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>color:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>transparent;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>text-shadow:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>none;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* FULLSCREEN HINT */</p>
+<p class="p2"><br></p>
+<p class="p1">#tap-hint {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>position: fixed;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>left: 50%;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>bottom:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>max(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>10px,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>env(safe-area-inset-bottom)</p>
+<p class="p1"><span class="Apple-converted-space">    </span>);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>transform:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>translateX(-50%);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>z-index:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>10;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>padding:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>6px 10px;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>border-radius:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>999px;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>background:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>rgba(0,0,0,.54);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>color:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>rgba(255,255,255,.66);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>font:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>12px/1</p>
+<p class="p1"><span class="Apple-converted-space">    </span>Arial,</p>
+<p class="p1"><span class="Apple-converted-space">    </span>Helvetica,</p>
+<p class="p1"><span class="Apple-converted-space">    </span>sans-serif;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>opacity:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>0;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>pointer-events:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>none;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>transition:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>opacity</p>
+<p class="p1"><span class="Apple-converted-space">    </span>180ms</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ease;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">#tap-hint.show {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>opacity: 1;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">@media</p>
+<p class="p1">(prefers-reduced-motion: reduce) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>.flipping {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>animation: none;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;/style&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;div id="board-wrapper"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div</p>
+<p class="p1"><span class="Apple-converted-space">    </span>id="board"</p>
+<p class="p1"><span class="Apple-converted-space">    </span>aria-label="Mini split-flap display"</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&gt;&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">&lt;div id="tap-hint"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>Tap once for fullscreen</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">&lt;script&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">"use strict";</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>BASIC BOARD SETTINGS</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">const ROWS = 6;</p>
+<p class="p2"><br></p>
+<p class="p1">const COLUMNS = 22;</p>
+<p class="p2"><br></p>
+<p class="p1">const TILE_COUNT =</p>
+<p class="p1"><span class="Apple-converted-space">  </span>ROWS * COLUMNS;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">const BOARD_ASPECT =</p>
+<p class="p1"><span class="Apple-converted-space">  </span>1.87;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">const FLIP_SPEED_MS =</p>
+<p class="p1"><span class="Apple-converted-space">  </span>62;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">const MIN_FLIPS =</p>
+<p class="p1"><span class="Apple-converted-space">  </span>3;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">const EXTRA_FLIPS =</p>
+<p class="p1"><span class="Apple-converted-space">  </span>4;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">const FLIP_CHARACTERS =</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!?$#@&amp;+-";</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>USER SETTINGS</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/*</p>
+<p class="p1"><span class="Apple-converted-space">   </span>Normal message duration.</p>
+<p class="p1">*/</p>
+<p class="p2"><br></p>
+<p class="p1">const DEFAULT_SCENE_SECONDS =</p>
+<p class="p1"><span class="Apple-converted-space">  </span>18;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/*</p>
+<p class="p1"><span class="Apple-converted-space">   </span>Time-specific messages.</p>
+<p class="p1">*/</p>
+<p class="p2"><br></p>
+<p class="p1">const TIME_MESSAGE_SECONDS =</p>
+<p class="p1"><span class="Apple-converted-space">  </span>24;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/*</p>
+<p class="p1"><span class="Apple-converted-space">   </span>Date/time display duration.</p>
+<p class="p1">*/</p>
+<p class="p2"><br></p>
+<p class="p1">const DATE_TIME_SECONDS =</p>
+<p class="p1"><span class="Apple-converted-space">  </span>12;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/*</p>
+<p class="p1"><span class="Apple-converted-space">   </span>Quote display duration.</p>
+<p class="p1">*/</p>
+<p class="p2"><br></p>
+<p class="p1">const QUOTE_SECONDS =</p>
+<p class="p1"><span class="Apple-converted-space">  </span>22;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/*</p>
+<p class="p1"><span class="Apple-converted-space">   </span>Automatically reload webpage.</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">   </span>This helps the Fire pick up</p>
+<p class="p1"><span class="Apple-converted-space">   </span>new GitHub edits.</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">   </span>Set to 0 to disable.</p>
+<p class="p1">*/</p>
+<p class="p2"><br></p>
+<p class="p1">const AUTO_REFRESH_HOURS =</p>
+<p class="p1"><span class="Apple-converted-space">  </span>6;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/*</p>
+<p class="p1"><span class="Apple-converted-space">   </span>Dim the page during sleep hours.</p>
+<p class="p1">*/</p>
+<p class="p2"><br></p>
+<p class="p1">const ENABLE_NIGHT_DIM =</p>
+<p class="p1"><span class="Apple-converted-space">  </span>true;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/*</p>
+<p class="p1"><span class="Apple-converted-space">   </span>Night dim begins at:</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">   </span>22 = 10 PM</p>
+<p class="p1">*/</p>
+<p class="p2"><br></p>
+<p class="p1">const NIGHT_DIM_START =</p>
+<p class="p1"><span class="Apple-converted-space">  </span>22;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/*</p>
+<p class="p1"><span class="Apple-converted-space">   </span>Returns to normal at:</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">   </span>6 = 6 AM</p>
+<p class="p1">*/</p>
+<p class="p2"><br></p>
+<p class="p1">const NIGHT_DIM_END =</p>
+<p class="p1"><span class="Apple-converted-space">  </span>6;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">const SHOW_FULLSCREEN_HINT =</p>
+<p class="p1"><span class="Apple-converted-space">  </span>true;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>MORNING MESSAGES</p>
+<p class="p1"><span class="Apple-converted-space">   </span>6:00 AM - 11:59 AM</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">const morningMessages = [</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"GOOD MORNING",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"START WITH PURPOSE",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"NEW DAY",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"NEW OPPORTUNITY",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"START STRONG",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"MAKE TODAY COUNT",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"GOOD MORNING",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"YOU SET THE TONE",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"TODAY IS YOURS",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"GO MAKE IT COUNT",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"RISE AND MOVE",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"ONE STEP FORWARD",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p1"><span class="Apple-converted-space">  </span>]</p>
+<p class="p2"><br></p>
+<p class="p1">];</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>AFTERNOON MESSAGES</p>
+<p class="p1"><span class="Apple-converted-space">   </span>12 PM - 4:59 PM</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">const afternoonMessages = [</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"KEEP GOING",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"YOU'RE NOT DONE YET",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"SMALL STEPS",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"STILL MOVE FORWARD",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"STAY FOCUSED",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"FINISH WITH PURPOSE",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"KEEP BUILDING",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"MOMENTUM MATTERS",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"TRUST THE PROCESS",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"KEEP MOVING",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"HALFWAY THERE",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"KEEP THE ENERGY",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p1"><span class="Apple-converted-space">  </span>]</p>
+<p class="p2"><br></p>
+<p class="p1">];</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>EVENING MESSAGES</p>
+<p class="p1"><span class="Apple-converted-space">   </span>5 PM - 9:59 PM</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">const eveningMessages = [</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"SLOW DOWN",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"YOU DID ENOUGH",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"WIND DOWN",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"LET TODAY SETTLE",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"TAKE IT EASY",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"ENJOY YOUR EVENING",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"LOOK BACK",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"NOTICE THE PROGRESS",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"REST IS PART",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"OF THE PROCESS",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"EXHALE",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"TOMORROW CAN WAIT",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p1"><span class="Apple-converted-space">  </span>]</p>
+<p class="p2"><br></p>
+<p class="p1">];</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>NIGHT MESSAGES</p>
+<p class="p1"><span class="Apple-converted-space">   </span>10 PM - 5:59 AM</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">const nightMessages = [</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"SLEEP TIGHT",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"TOMORROW IS",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"A FRESH START",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"GOOD NIGHT",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"REST YOUR MIND",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"REST WELL",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"YOU EARNED IT",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"LET THE DAY GO",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"TOMORROW IS NEW",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"TIME TO REST",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"RECHARGE FOR TOMORROW",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"SLEEP WELL",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"START FRESH TOMORROW",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p1"><span class="Apple-converted-space">  </span>]</p>
+<p class="p2"><br></p>
+<p class="p1">];</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>GENERAL INSPIRATIONAL QUOTES</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">const inspirationalQuotes = [</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"PROGRESS",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"OVER PERFECTION",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"DISCIPLINE BUILDS",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"WHAT MOTIVATION STARTS",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"BE PROUD",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"THEN KEEP GOING",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"CONSISTENCY",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"CHANGES EVERYTHING",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"DO THE NEXT",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"RIGHT THING",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"YOUR FUTURE",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"NEEDS TODAY'S EFFORT",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p1"><span class="Apple-converted-space">  </span>]</p>
+<p class="p2"><br></p>
+<p class="p1">];</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>SPECIAL DATES</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">   </span>FORMAT:</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">   </span>MM-DD</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">   </span>Add birthdays, anniversaries,</p>
+<p class="p1"><span class="Apple-converted-space">   </span>holidays, etc.</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">const specialDates = {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>"01-01": [</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"HAPPY NEW YEAR",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"NEW YEAR NEW START",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>"12-25": [</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"MERRY CHRISTMAS",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"ENJOY THE DAY",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>""</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>]</p>
+<p class="p2"><br></p>
+<p class="p1">};</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>COLOR SETTINGS</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">const VALID_COLORS =</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>new Set([</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>"red",</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>"orange",</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>"yellow",</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>"green",</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>"blue",</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>"purple",</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>"white"</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>]);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">const COLOR_CLASSES =</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>Array</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.from(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>VALID_COLORS</p>
+<p class="p1"><span class="Apple-converted-space">    </span>)</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.map(</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>function (color) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>return (</p>
+<p class="p1"><span class="Apple-converted-space">          </span>"color-"</p>
+<p class="p1"><span class="Apple-converted-space">          </span>+</p>
+<p class="p1"><span class="Apple-converted-space">          </span>color</p>
+<p class="p1"><span class="Apple-converted-space">        </span>);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>INTERNAL VARIABLES</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">const board =</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.getElementById(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>"board"</p>
+<p class="p1"><span class="Apple-converted-space">    </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">const tapHint =</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.getElementById(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>"tap-hint"</p>
+<p class="p1"><span class="Apple-converted-space">    </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">const tiles =</p>
+<p class="p1"><span class="Apple-converted-space">  </span>[];</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">let sceneTimer =</p>
+<p class="p1"><span class="Apple-converted-space">  </span>null;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">let animationGeneration =</p>
+<p class="p1"><span class="Apple-converted-space">  </span>0;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">let wakeLock =</p>
+<p class="p1"><span class="Apple-converted-space">  </span>null;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">let hintTimer =</p>
+<p class="p1"><span class="Apple-converted-space">  </span>null;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">let lastTimeMessageIndex =</p>
+<p class="p1"><span class="Apple-converted-space">  </span>-1;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">let lastQuoteIndex =</p>
+<p class="p1"><span class="Apple-converted-space">  </span>-1;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">let rotationStep =</p>
+<p class="p1"><span class="Apple-converted-space">  </span>0;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">let shiftIndex =</p>
+<p class="p1"><span class="Apple-converted-space">  </span>0;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>CREATE BOARD</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">function createBoard() {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const fragment =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>document</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.createDocumentFragment();</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>for (</p>
+<p class="p1"><span class="Apple-converted-space">    </span>let i = 0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>i &lt; TILE_COUNT;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>i++</p>
+<p class="p1"><span class="Apple-converted-space">  </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const tile =</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.createElement(</p>
+<p class="p1"><span class="Apple-converted-space">          </span>"div"</p>
+<p class="p1"><span class="Apple-converted-space">        </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>tile.className =</p>
+<p class="p1"><span class="Apple-converted-space">      </span>"tile";</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const character =</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.createElement(</p>
+<p class="p1"><span class="Apple-converted-space">          </span>"span"</p>
+<p class="p1"><span class="Apple-converted-space">        </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>character.className =</p>
+<p class="p1"><span class="Apple-converted-space">      </span>"character";</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>character.textContent =</p>
+<p class="p1"><span class="Apple-converted-space">      </span>" ";</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>tile.appendChild(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>character</p>
+<p class="p1"><span class="Apple-converted-space">    </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>fragment.appendChild(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>tile</p>
+<p class="p1"><span class="Apple-converted-space">    </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>tiles.push({</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>tile:</p>
+<p class="p1"><span class="Apple-converted-space">        </span>tile,</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>character:</p>
+<p class="p1"><span class="Apple-converted-space">        </span>character</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>board.appendChild(</p>
+<p class="p1"><span class="Apple-converted-space">    </span>fragment</p>
+<p class="p1"><span class="Apple-converted-space">  </span>);</p>
+<p class="p2"><br></p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>FIT BOARD TO DISPLAY</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">function fitBoard() {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const maxWidth =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>Math.max(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>1,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>window.innerWidth * 0.96</p>
+<p class="p1"><span class="Apple-converted-space">    </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const maxHeight =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>Math.max(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>1,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>window.innerHeight * 0.92</p>
+<p class="p1"><span class="Apple-converted-space">    </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>let width =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>maxWidth;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>let height =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>width / BOARD_ASPECT;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (</p>
+<p class="p1"><span class="Apple-converted-space">    </span>height &gt; maxHeight</p>
+<p class="p1"><span class="Apple-converted-space">  </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>height =</p>
+<p class="p1"><span class="Apple-converted-space">      </span>maxHeight;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>width =</p>
+<p class="p1"><span class="Apple-converted-space">      </span>height * BOARD_ASPECT;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>board.style.width =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>Math.floor(width)</p>
+<p class="p1"><span class="Apple-converted-space">    </span>+</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"px";</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>board.style.height =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>Math.floor(height)</p>
+<p class="p1"><span class="Apple-converted-space">    </span>+</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"px";</p>
+<p class="p2"><br></p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>TEXT FORMATTING</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">function normalizeText(value) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>return String(</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>value == null</p>
+<p class="p1"><span class="Apple-converted-space">      </span>?</p>
+<p class="p1"><span class="Apple-converted-space">      </span>""</p>
+<p class="p1"><span class="Apple-converted-space">      </span>:</p>
+<p class="p1"><span class="Apple-converted-space">      </span>value</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>)</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.replace(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>/[\u2018\u2019]/g,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>"'"</p>
+<p class="p1"><span class="Apple-converted-space">    </span>)</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.replace(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>/[\u201C\u201D]/g,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>'"'</p>
+<p class="p1"><span class="Apple-converted-space">    </span>)</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.toUpperCase()</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.slice(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>0,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>COLUMNS</p>
+<p class="p1"><span class="Apple-converted-space">    </span>);</p>
+<p class="p2"><br></p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">function centerText(value) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const text =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>normalizeText(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>value</p>
+<p class="p1"><span class="Apple-converted-space">    </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const remaining =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>COLUMNS</p>
+<p class="p1"><span class="Apple-converted-space">    </span>-</p>
+<p class="p1"><span class="Apple-converted-space">    </span>text.length;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const left =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>Math.floor(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>remaining / 2</p>
+<p class="p1"><span class="Apple-converted-space">    </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const right =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>remaining - left;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>return (</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>" ".repeat(left)</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>+</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>text</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>+</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>" ".repeat(right)</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>);</p>
+<p class="p2"><br></p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">function formatLines(lines) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const output =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>[];</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>for (</p>
+<p class="p1"><span class="Apple-converted-space">    </span>let row = 0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>row &lt; ROWS;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>row++</p>
+<p class="p1"><span class="Apple-converted-space">  </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const currentLine =</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>(</p>
+<p class="p1"><span class="Apple-converted-space">        </span>lines</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&amp;&amp;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>lines[row] != null</p>
+<p class="p1"><span class="Apple-converted-space">      </span>)</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>?</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>lines[row]</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>:</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>"";</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const centered =</p>
+<p class="p1"><span class="Apple-converted-space">      </span>centerText(</p>
+<p class="p1"><span class="Apple-converted-space">        </span>currentLine</p>
+<p class="p1"><span class="Apple-converted-space">      </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const characters =</p>
+<p class="p1"><span class="Apple-converted-space">      </span>centered.split(</p>
+<p class="p1"><span class="Apple-converted-space">        </span>""</p>
+<p class="p1"><span class="Apple-converted-space">      </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>for (</p>
+<p class="p1"><span class="Apple-converted-space">      </span>let i = 0;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>i &lt; characters.length;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>i++</p>
+<p class="p1"><span class="Apple-converted-space">    </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>output.push(</p>
+<p class="p1"><span class="Apple-converted-space">        </span>characters[i]</p>
+<p class="p1"><span class="Apple-converted-space">      </span>);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (</p>
+<p class="p1"><span class="Apple-converted-space">    </span>output.length</p>
+<p class="p1"><span class="Apple-converted-space">    </span>!==</p>
+<p class="p1"><span class="Apple-converted-space">    </span>TILE_COUNT</p>
+<p class="p1"><span class="Apple-converted-space">  </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>throw new Error(</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>"Expected "</p>
+<p class="p1"><span class="Apple-converted-space">      </span>+</p>
+<p class="p1"><span class="Apple-converted-space">      </span>TILE_COUNT</p>
+<p class="p1"><span class="Apple-converted-space">      </span>+</p>
+<p class="p1"><span class="Apple-converted-space">      </span>" tiles but got "</p>
+<p class="p1"><span class="Apple-converted-space">      </span>+</p>
+<p class="p1"><span class="Apple-converted-space">      </span>output.length</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>return output;</p>
+<p class="p2"><br></p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>TILE COLORS</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">function clearColors() {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>for (</p>
+<p class="p1"><span class="Apple-converted-space">    </span>let i = 0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>i &lt; tiles.length;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>i++</p>
+<p class="p1"><span class="Apple-converted-space">  </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>tiles[i]</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.tile</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.classList</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.remove</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.apply(</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>tiles[i].tile.classList,</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>COLOR_CLASSES</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">function applyColors(colors) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>clearColors();</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (</p>
+<p class="p1"><span class="Apple-converted-space">    </span>!Array.isArray(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>colors</p>
+<p class="p1"><span class="Apple-converted-space">    </span>)</p>
+<p class="p1"><span class="Apple-converted-space">  </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>for (</p>
+<p class="p1"><span class="Apple-converted-space">    </span>let i = 0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>i &lt; colors.length;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>i++</p>
+<p class="p1"><span class="Apple-converted-space">  </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const entry =</p>
+<p class="p1"><span class="Apple-converted-space">      </span>colors[i];</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const row =</p>
+<p class="p1"><span class="Apple-converted-space">      </span>Number(</p>
+<p class="p1"><span class="Apple-converted-space">        </span>entry</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&amp;&amp;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>entry.row</p>
+<p class="p1"><span class="Apple-converted-space">      </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const col =</p>
+<p class="p1"><span class="Apple-converted-space">      </span>Number(</p>
+<p class="p1"><span class="Apple-converted-space">        </span>entry</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&amp;&amp;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>entry.col</p>
+<p class="p1"><span class="Apple-converted-space">      </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const color =</p>
+<p class="p1"><span class="Apple-converted-space">      </span>String(</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>(</p>
+<p class="p1"><span class="Apple-converted-space">          </span>entry</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&amp;&amp;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>entry.color</p>
+<p class="p1"><span class="Apple-converted-space">        </span>)</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>||</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>""</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>)</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.toLowerCase();</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>!Number.isInteger(row)</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>||</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>!Number.isInteger(col)</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>continue;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>row &lt; 0</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>||</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>row &gt;= ROWS</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>||</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>col &lt; 0</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>||</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>col &gt;= COLUMNS</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>continue;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (</p>
+<p class="p1"><span class="Apple-converted-space">      </span>!VALID_COLORS.has(</p>
+<p class="p1"><span class="Apple-converted-space">        </span>color</p>
+<p class="p1"><span class="Apple-converted-space">      </span>)</p>
+<p class="p1"><span class="Apple-converted-space">    </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>continue;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>tiles[</p>
+<p class="p1"><span class="Apple-converted-space">      </span>row * COLUMNS + col</p>
+<p class="p1"><span class="Apple-converted-space">    </span>]</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.tile</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.classList</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.add(</p>
+<p class="p1"><span class="Apple-converted-space">        </span>"color-" + color</p>
+<p class="p1"><span class="Apple-converted-space">      </span>);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>FLIP ANIMATION</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">function randomFlipCharacter() {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>return (</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>FLIP_CHARACTERS[</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>Math.floor(</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>Math.random()</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>*</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>FLIP_CHARACTERS.length</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>)</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>]</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>);</p>
+<p class="p2"><br></p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">function animateTile(</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>index,</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>finalCharacter,</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>delay,</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>generation</p>
+<p class="p2"><br></p>
+<p class="p1">) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const item =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>tiles[index];</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (</p>
+<p class="p1"><span class="Apple-converted-space">    </span>!item</p>
+<p class="p1"><span class="Apple-converted-space">    </span>||</p>
+<p class="p1"><span class="Apple-converted-space">    </span>item.character.textContent</p>
+<p class="p1"><span class="Apple-converted-space">    </span>===</p>
+<p class="p1"><span class="Apple-converted-space">    </span>finalCharacter</p>
+<p class="p1"><span class="Apple-converted-space">  </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>window.setTimeout(</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function () {</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (</p>
+<p class="p1"><span class="Apple-converted-space">        </span>generation</p>
+<p class="p1"><span class="Apple-converted-space">        </span>!==</p>
+<p class="p1"><span class="Apple-converted-space">        </span>animationGeneration</p>
+<p class="p1"><span class="Apple-converted-space">      </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>const totalFlips =</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>MIN_FLIPS</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>+</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>Math.floor(</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>Math.random()</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>*</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>(</p>
+<p class="p1"><span class="Apple-converted-space">            </span>EXTRA_FLIPS + 1</p>
+<p class="p1"><span class="Apple-converted-space">          </span>)</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>let flipCount =</p>
+<p class="p1"><span class="Apple-converted-space">        </span>0;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>const interval =</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>window.setInterval(</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>function () {</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (</p>
+<p class="p1"><span class="Apple-converted-space">              </span>generation</p>
+<p class="p1"><span class="Apple-converted-space">              </span>!==</p>
+<p class="p1"><span class="Apple-converted-space">              </span>animationGeneration</p>
+<p class="p1"><span class="Apple-converted-space">            </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">              </span>window.clearInterval(</p>
+<p class="p1"><span class="Apple-converted-space">                </span>interval</p>
+<p class="p1"><span class="Apple-converted-space">              </span>);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">              </span>return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>item</p>
+<p class="p1"><span class="Apple-converted-space">              </span>.tile</p>
+<p class="p1"><span class="Apple-converted-space">              </span>.classList</p>
+<p class="p1"><span class="Apple-converted-space">              </span>.remove(</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"flipping"</p>
+<p class="p1"><span class="Apple-converted-space">              </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>void item</p>
+<p class="p1"><span class="Apple-converted-space">              </span>.tile</p>
+<p class="p1"><span class="Apple-converted-space">              </span>.offsetWidth;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>item</p>
+<p class="p1"><span class="Apple-converted-space">              </span>.tile</p>
+<p class="p1"><span class="Apple-converted-space">              </span>.classList</p>
+<p class="p1"><span class="Apple-converted-space">              </span>.add(</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"flipping"</p>
+<p class="p1"><span class="Apple-converted-space">              </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>flipCount++;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (</p>
+<p class="p1"><span class="Apple-converted-space">              </span>flipCount</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&gt;=</p>
+<p class="p1"><span class="Apple-converted-space">              </span>totalFlips</p>
+<p class="p1"><span class="Apple-converted-space">            </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">              </span>window.clearInterval(</p>
+<p class="p1"><span class="Apple-converted-space">                </span>interval</p>
+<p class="p1"><span class="Apple-converted-space">              </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">              </span>item</p>
+<p class="p1"><span class="Apple-converted-space">                </span>.character</p>
+<p class="p1"><span class="Apple-converted-space">                </span>.textContent =</p>
+<p class="p1"><span class="Apple-converted-space">                  </span>finalCharacter;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">              </span>item</p>
+<p class="p1"><span class="Apple-converted-space">                </span>.tile</p>
+<p class="p1"><span class="Apple-converted-space">                </span>.classList</p>
+<p class="p1"><span class="Apple-converted-space">                </span>.remove(</p>
+<p class="p1"><span class="Apple-converted-space">                  </span>"flipping"</p>
+<p class="p1"><span class="Apple-converted-space">                </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">              </span>return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>item</p>
+<p class="p1"><span class="Apple-converted-space">              </span>.character</p>
+<p class="p1"><span class="Apple-converted-space">              </span>.textContent =</p>
+<p class="p1"><span class="Apple-converted-space">                </span>randomFlipCharacter();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>},</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>FLIP_SPEED_MS</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>},</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>delay</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>);</p>
+<p class="p2"><br></p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>DISPLAY SCENE</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">function displayScene(scene) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (</p>
+<p class="p1"><span class="Apple-converted-space">    </span>!scene</p>
+<p class="p1"><span class="Apple-converted-space">  </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>animationGeneration++;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const generation =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>animationGeneration;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const formatted =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>formatLines(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>scene.lines || []</p>
+<p class="p1"><span class="Apple-converted-space">    </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>applyColors(</p>
+<p class="p1"><span class="Apple-converted-space">    </span>scene.colors</p>
+<p class="p1"><span class="Apple-converted-space">  </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>for (</p>
+<p class="p1"><span class="Apple-converted-space">    </span>let index = 0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>index &lt; formatted.length;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>index++</p>
+<p class="p1"><span class="Apple-converted-space">  </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const row =</p>
+<p class="p1"><span class="Apple-converted-space">      </span>Math.floor(</p>
+<p class="p1"><span class="Apple-converted-space">        </span>index / COLUMNS</p>
+<p class="p1"><span class="Apple-converted-space">      </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const col =</p>
+<p class="p1"><span class="Apple-converted-space">      </span>index % COLUMNS;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const delay =</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>col * 11</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>+</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>row * 33</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>+</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>Math.random() * 70;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>animateTile(</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>index,</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>formatted[index],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>delay,</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>generation</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>RANDOM MESSAGE WITHOUT REPEATING</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">function randomIndexAvoidRepeat(</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>length,</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>lastIndex</p>
+<p class="p2"><br></p>
+<p class="p1">) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (</p>
+<p class="p1"><span class="Apple-converted-space">    </span>length &lt;= 1</p>
+<p class="p1"><span class="Apple-converted-space">  </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>return 0;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>let index =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>Math.floor(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>Math.random() * length</p>
+<p class="p1"><span class="Apple-converted-space">    </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (</p>
+<p class="p1"><span class="Apple-converted-space">    </span>index === lastIndex</p>
+<p class="p1"><span class="Apple-converted-space">  </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>index =</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>(</p>
+<p class="p1"><span class="Apple-converted-space">        </span>index</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>+</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>1</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>+</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>Math.floor(</p>
+<p class="p1"><span class="Apple-converted-space">          </span>Math.random()</p>
+<p class="p1"><span class="Apple-converted-space">          </span>*</p>
+<p class="p1"><span class="Apple-converted-space">          </span>(length - 1)</p>
+<p class="p1"><span class="Apple-converted-space">        </span>)</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>)</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>%</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>length;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>return index;</p>
+<p class="p2"><br></p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>DETERMINE TIME PERIOD</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">function getPeriodInfo() {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const hour =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>new Date()</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.getHours();</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (</p>
+<p class="p1"><span class="Apple-converted-space">    </span>hour &gt;= 6</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&amp;&amp;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>hour &lt; 12</p>
+<p class="p1"><span class="Apple-converted-space">  </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>return {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>name:</p>
+<p class="p1"><span class="Apple-converted-space">        </span>"morning",</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>messages:</p>
+<p class="p1"><span class="Apple-converted-space">        </span>morningMessages,</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>color:</p>
+<p class="p1"><span class="Apple-converted-space">        </span>"yellow"</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (</p>
+<p class="p1"><span class="Apple-converted-space">    </span>hour &gt;= 12</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&amp;&amp;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>hour &lt; 17</p>
+<p class="p1"><span class="Apple-converted-space">  </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>return {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>name:</p>
+<p class="p1"><span class="Apple-converted-space">        </span>"afternoon",</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>messages:</p>
+<p class="p1"><span class="Apple-converted-space">        </span>afternoonMessages,</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>color:</p>
+<p class="p1"><span class="Apple-converted-space">        </span>"blue"</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (</p>
+<p class="p1"><span class="Apple-converted-space">    </span>hour &gt;= 17</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&amp;&amp;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>hour &lt; 22</p>
+<p class="p1"><span class="Apple-converted-space">  </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>return {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>name:</p>
+<p class="p1"><span class="Apple-converted-space">        </span>"evening",</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>messages:</p>
+<p class="p1"><span class="Apple-converted-space">        </span>eveningMessages,</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>color:</p>
+<p class="p1"><span class="Apple-converted-space">        </span>"orange"</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>return {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>name:</p>
+<p class="p1"><span class="Apple-converted-space">      </span>"night",</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>messages:</p>
+<p class="p1"><span class="Apple-converted-space">      </span>nightMessages,</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>color:</p>
+<p class="p1"><span class="Apple-converted-space">      </span>"purple"</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>};</p>
+<p class="p2"><br></p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>COLORED CORNERS</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">function coloredCorners(color) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>return [</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>{</p>
+<p class="p1"><span class="Apple-converted-space">      </span>row: 0,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>col: 0,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>color: color</p>
+<p class="p1"><span class="Apple-converted-space">    </span>},</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>{</p>
+<p class="p1"><span class="Apple-converted-space">      </span>row: 0,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>col: 21,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>color: color</p>
+<p class="p1"><span class="Apple-converted-space">    </span>},</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>{</p>
+<p class="p1"><span class="Apple-converted-space">      </span>row: 5,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>col: 0,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>color: color</p>
+<p class="p1"><span class="Apple-converted-space">    </span>},</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>{</p>
+<p class="p1"><span class="Apple-converted-space">      </span>row: 5,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>col: 21,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>color: color</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>];</p>
+<p class="p2"><br></p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>TIME MESSAGE SCENE</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">function buildTimeMessageScene() {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const period =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>getPeriodInfo();</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const index =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>randomIndexAvoidRepeat(</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>period.messages.length,</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>lastTimeMessageIndex</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>lastTimeMessageIndex =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>index;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>return {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>lines:</p>
+<p class="p1"><span class="Apple-converted-space">      </span>period.messages[index],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>colors:</p>
+<p class="p1"><span class="Apple-converted-space">      </span>coloredCorners(</p>
+<p class="p1"><span class="Apple-converted-space">        </span>period.color</p>
+<p class="p1"><span class="Apple-converted-space">      </span>),</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>duration:</p>
+<p class="p1"><span class="Apple-converted-space">      </span>TIME_MESSAGE_SECONDS</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>};</p>
+<p class="p2"><br></p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>QUOTE SCENE</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">function buildQuoteScene() {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const index =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>randomIndexAvoidRepeat(</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>inspirationalQuotes.length,</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>lastQuoteIndex</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>lastQuoteIndex =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>index;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>return {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>lines:</p>
+<p class="p1"><span class="Apple-converted-space">      </span>inspirationalQuotes[index],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>colors:</p>
+<p class="p1"><span class="Apple-converted-space">      </span>[],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>duration:</p>
+<p class="p1"><span class="Apple-converted-space">      </span>QUOTE_SECONDS</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>};</p>
+<p class="p2"><br></p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>DATE + TIME SCENE</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">function buildDateTimeScene() {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const now =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>new Date();</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const weekday =</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>new Intl.DateTimeFormat(</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>"en-US",</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>{</p>
+<p class="p1"><span class="Apple-converted-space">        </span>weekday:</p>
+<p class="p1"><span class="Apple-converted-space">          </span>"long"</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>)</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.format(</p>
+<p class="p1"><span class="Apple-converted-space">        </span>now</p>
+<p class="p1"><span class="Apple-converted-space">      </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const date =</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>new Intl.DateTimeFormat(</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>"en-US",</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>{</p>
+<p class="p1"><span class="Apple-converted-space">        </span>month:</p>
+<p class="p1"><span class="Apple-converted-space">          </span>"long",</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>day:</p>
+<p class="p1"><span class="Apple-converted-space">          </span>"numeric"</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>)</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.format(</p>
+<p class="p1"><span class="Apple-converted-space">        </span>now</p>
+<p class="p1"><span class="Apple-converted-space">      </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const time =</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>new Intl.DateTimeFormat(</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>"en-US",</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>{</p>
+<p class="p1"><span class="Apple-converted-space">        </span>hour:</p>
+<p class="p1"><span class="Apple-converted-space">          </span>"numeric",</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>minute:</p>
+<p class="p1"><span class="Apple-converted-space">          </span>"2-digit"</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>)</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.format(</p>
+<p class="p1"><span class="Apple-converted-space">        </span>now</p>
+<p class="p1"><span class="Apple-converted-space">      </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>return {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>lines: [</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>"",</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>weekday,</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>date,</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>"",</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>time,</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>""</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>colors:</p>
+<p class="p1"><span class="Apple-converted-space">      </span>[],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>duration:</p>
+<p class="p1"><span class="Apple-converted-space">      </span>DATE_TIME_SECONDS</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>};</p>
+<p class="p2"><br></p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>SPECIAL DATE SCENE</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">function getSpecialDateScene() {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const now =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>new Date();</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const mm =</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>String(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>now.getMonth() + 1</p>
+<p class="p1"><span class="Apple-converted-space">    </span>)</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.padStart(</p>
+<p class="p1"><span class="Apple-converted-space">        </span>2,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>"0"</p>
+<p class="p1"><span class="Apple-converted-space">      </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const dd =</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>String(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>now.getDate()</p>
+<p class="p1"><span class="Apple-converted-space">    </span>)</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.padStart(</p>
+<p class="p1"><span class="Apple-converted-space">        </span>2,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>"0"</p>
+<p class="p1"><span class="Apple-converted-space">      </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const lines =</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>specialDates[</p>
+<p class="p1"><span class="Apple-converted-space">      </span>mm + "-" + dd</p>
+<p class="p1"><span class="Apple-converted-space">    </span>];</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (</p>
+<p class="p1"><span class="Apple-converted-space">    </span>!lines</p>
+<p class="p1"><span class="Apple-converted-space">  </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>return null;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>return {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>lines:</p>
+<p class="p1"><span class="Apple-converted-space">      </span>lines,</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>colors:</p>
+<p class="p1"><span class="Apple-converted-space">      </span>coloredCorners(</p>
+<p class="p1"><span class="Apple-converted-space">        </span>"green"</p>
+<p class="p1"><span class="Apple-converted-space">      </span>),</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>duration:</p>
+<p class="p1"><span class="Apple-converted-space">      </span>30</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>};</p>
+<p class="p2"><br></p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>ROTATION LOGIC</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">function getNextScene() {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const special =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>getSpecialDateScene();</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (</p>
+<p class="p1"><span class="Apple-converted-space">    </span>special</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&amp;&amp;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>rotationStep % 4 === 0</p>
+<p class="p1"><span class="Apple-converted-space">  </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>rotationStep++;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>return special;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>/*</p>
+<p class="p1"><span class="Apple-converted-space">     </span>Normal repeating pattern:</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">     </span>time-based message</p>
+<p class="p1"><span class="Apple-converted-space">     </span>date/time</p>
+<p class="p1"><span class="Apple-converted-space">     </span>quote</p>
+<p class="p1"><span class="Apple-converted-space">     </span>time-based message</p>
+<p class="p1"><span class="Apple-converted-space">     </span>quote</p>
+<p class="p1"><span class="Apple-converted-space">  </span>*/</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const pattern = [</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>"time",</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>"date",</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>"quote",</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>"time",</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>"quote"</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>];</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const type =</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>pattern[</p>
+<p class="p1"><span class="Apple-converted-space">      </span>rotationStep</p>
+<p class="p1"><span class="Apple-converted-space">      </span>%</p>
+<p class="p1"><span class="Apple-converted-space">      </span>pattern.length</p>
+<p class="p1"><span class="Apple-converted-space">    </span>];</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>rotationStep++;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (</p>
+<p class="p1"><span class="Apple-converted-space">    </span>type === "date"</p>
+<p class="p1"><span class="Apple-converted-space">  </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>return buildDateTimeScene();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (</p>
+<p class="p1"><span class="Apple-converted-space">    </span>type === "quote"</p>
+<p class="p1"><span class="Apple-converted-space">  </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>return buildQuoteScene();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>return buildTimeMessageScene();</p>
+<p class="p2"><br></p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>PLAY NEXT SCENE</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">function playNextScene() {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (</p>
+<p class="p1"><span class="Apple-converted-space">    </span>sceneTimer !== null</p>
+<p class="p1"><span class="Apple-converted-space">  </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>window.clearTimeout(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>sceneTimer</p>
+<p class="p1"><span class="Apple-converted-space">    </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>sceneTimer =</p>
+<p class="p1"><span class="Apple-converted-space">      </span>null;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const scene =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>getNextScene();</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>displayScene(</p>
+<p class="p1"><span class="Apple-converted-space">    </span>scene</p>
+<p class="p1"><span class="Apple-converted-space">  </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>let duration =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>Number(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>scene.duration</p>
+<p class="p1"><span class="Apple-converted-space">    </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>!Number.isFinite(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>duration</p>
+<p class="p1"><span class="Apple-converted-space">    </span>)</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>||</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>duration &lt; 2</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>duration =</p>
+<p class="p1"><span class="Apple-converted-space">      </span>DEFAULT_SCENE_SECONDS;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>sceneTimer =</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>window.setTimeout(</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>playNextScene,</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>duration * 1000</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>);</p>
+<p class="p2"><br></p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>NIGHT DIMMING</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">function applyNightDimming() {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (</p>
+<p class="p1"><span class="Apple-converted-space">    </span>!ENABLE_NIGHT_DIM</p>
+<p class="p1"><span class="Apple-converted-space">  </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.body</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.classList</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.remove(</p>
+<p class="p1"><span class="Apple-converted-space">        </span>"night-dim"</p>
+<p class="p1"><span class="Apple-converted-space">      </span>);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const hour =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>new Date()</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.getHours();</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const shouldDim =</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>NIGHT_DIM_START</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>NIGHT_DIM_END</p>
+<p class="p1"><span class="Apple-converted-space">    </span>)</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>?</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>hour &gt;= NIGHT_DIM_START</p>
+<p class="p1"><span class="Apple-converted-space">      </span>||</p>
+<p class="p1"><span class="Apple-converted-space">      </span>hour &lt; NIGHT_DIM_END</p>
+<p class="p1"><span class="Apple-converted-space">    </span>)</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>:</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>hour &gt;= NIGHT_DIM_START</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&amp;&amp;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>hour &lt; NIGHT_DIM_END</p>
+<p class="p1"><span class="Apple-converted-space">    </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.body</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.classList</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.toggle(</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>"night-dim",</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>shouldDim</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>);</p>
+<p class="p2"><br></p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>MICRO PIXEL SHIFT</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">function applyPixelShift() {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const shifts = [</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>[0,0],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>[1,0],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>[0,1],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>[-1,0],</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>[0,-1]</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>];</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>shiftIndex =</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>shiftIndex + 1</p>
+<p class="p1"><span class="Apple-converted-space">    </span>)</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>%</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>shifts.length;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>board.style.transform =</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>"translate("</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>+</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>shifts[shiftIndex][0]</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>+</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>"px,"</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>+</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>shifts[shiftIndex][1]</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>+</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>"px)";</p>
+<p class="p2"><br></p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>FULLSCREEN</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">function enterFullscreen() {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const element =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.documentElement;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (</p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.fullscreenElement</p>
+<p class="p1"><span class="Apple-converted-space">  </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (</p>
+<p class="p1"><span class="Apple-converted-space">    </span>typeof element.requestFullscreen</p>
+<p class="p1"><span class="Apple-converted-space">    </span>===</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"function"</p>
+<p class="p1"><span class="Apple-converted-space">  </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>try {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>const result =</p>
+<p class="p1"><span class="Apple-converted-space">        </span>element.requestFullscreen();</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>result</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&amp;&amp;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>typeof result.then</p>
+<p class="p1"><span class="Apple-converted-space">        </span>===</p>
+<p class="p1"><span class="Apple-converted-space">        </span>"function"</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>result</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>.then(</p>
+<p class="p1"><span class="Apple-converted-space">            </span>hideFullscreenHint</p>
+<p class="p1"><span class="Apple-converted-space">          </span>)</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>.catch(</p>
+<p class="p1"><span class="Apple-converted-space">            </span>function () {}</p>
+<p class="p1"><span class="Apple-converted-space">          </span>);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>else {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>hideFullscreenHint();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>catch (error) {}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (</p>
+<p class="p1"><span class="Apple-converted-space">    </span>typeof element.webkitRequestFullscreen</p>
+<p class="p1"><span class="Apple-converted-space">    </span>===</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"function"</p>
+<p class="p1"><span class="Apple-converted-space">  </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>try {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>element</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.webkitRequestFullscreen();</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>hideFullscreenHint();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>catch (error) {}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>FULLSCREEN HINT</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">function showFullscreenHint() {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (</p>
+<p class="p1"><span class="Apple-converted-space">    </span>!SHOW_FULLSCREEN_HINT</p>
+<p class="p1"><span class="Apple-converted-space">    </span>||</p>
+<p class="p1"><span class="Apple-converted-space">    </span>!tapHint</p>
+<p class="p1"><span class="Apple-converted-space">  </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>tapHint</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.classList</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.add(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>"show"</p>
+<p class="p1"><span class="Apple-converted-space">    </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>window.clearTimeout(</p>
+<p class="p1"><span class="Apple-converted-space">    </span>hintTimer</p>
+<p class="p1"><span class="Apple-converted-space">  </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>hintTimer =</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>window.setTimeout(</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>hideFullscreenHint,</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>4500</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>);</p>
+<p class="p2"><br></p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">function hideFullscreenHint() {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (</p>
+<p class="p1"><span class="Apple-converted-space">    </span>!tapHint</p>
+<p class="p1"><span class="Apple-converted-space">  </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>tapHint</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.classList</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.remove(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>"show"</p>
+<p class="p1"><span class="Apple-converted-space">    </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>window.clearTimeout(</p>
+<p class="p1"><span class="Apple-converted-space">    </span>hintTimer</p>
+<p class="p1"><span class="Apple-converted-space">  </span>);</p>
+<p class="p2"><br></p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>WAKE LOCK</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">function requestWakeLock() {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>!navigator</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>||</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>!navigator.wakeLock</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>||</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>typeof navigator.wakeLock.request</p>
+<p class="p1"><span class="Apple-converted-space">    </span>!==</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"function"</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>wakeLock</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&amp;&amp;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>wakeLock.released === false</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>navigator</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.wakeLock</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.request(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>"screen"</p>
+<p class="p1"><span class="Apple-converted-space">    </span>)</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.then(</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>function (lock) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>wakeLock =</p>
+<p class="p1"><span class="Apple-converted-space">          </span>lock;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>wakeLock</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>&amp;&amp;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>typeof wakeLock.addEventListener</p>
+<p class="p1"><span class="Apple-converted-space">          </span>===</p>
+<p class="p1"><span class="Apple-converted-space">          </span>"function"</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>wakeLock</p>
+<p class="p1"><span class="Apple-converted-space">            </span>.addEventListener(</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">              </span>"release",</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">              </span>function () {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>wakeLock =</p>
+<p class="p1"><span class="Apple-converted-space">                  </span>null;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">              </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>)</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.catch(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>function () {}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>);</p>
+<p class="p2"><br></p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>AUTO REFRESH</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">function scheduleAutoRefresh() {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>!Number.isFinite(</p>
+<p class="p1"><span class="Apple-converted-space">      </span>AUTO_REFRESH_HOURS</p>
+<p class="p1"><span class="Apple-converted-space">    </span>)</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>||</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>AUTO_REFRESH_HOURS &lt;= 0</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>window.setTimeout(</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function () {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>window.location.reload();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>},</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>AUTO_REFRESH_HOURS</p>
+<p class="p1"><span class="Apple-converted-space">    </span>*</p>
+<p class="p1"><span class="Apple-converted-space">    </span>60</p>
+<p class="p1"><span class="Apple-converted-space">    </span>*</p>
+<p class="p1"><span class="Apple-converted-space">    </span>60</p>
+<p class="p1"><span class="Apple-converted-space">    </span>*</p>
+<p class="p1"><span class="Apple-converted-space">    </span>1000</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>);</p>
+<p class="p2"><br></p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>START APPLICATION</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">function startApp() {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>createBoard();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>fitBoard();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>applyNightDimming();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>playNextScene();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>requestWakeLock();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>showFullscreenHint();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>scheduleAutoRefresh();</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>/*</p>
+<p class="p1"><span class="Apple-converted-space">     </span>Re-check whether night mode</p>
+<p class="p1"><span class="Apple-converted-space">     </span>should be enabled every minute.</p>
+<p class="p1"><span class="Apple-converted-space">  </span>*/</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>window.setInterval(</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>applyNightDimming,</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>60000</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>/*</p>
+<p class="p1"><span class="Apple-converted-space">     </span>Tiny board position shift</p>
+<p class="p1"><span class="Apple-converted-space">     </span>every five minutes.</p>
+<p class="p1"><span class="Apple-converted-space">  </span>*/</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>window.setInterval(</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>applyPixelShift,</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>300000</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>);</p>
+<p class="p2"><br></p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>EVENTS</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">window.addEventListener(</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>"resize",</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>fitBoard</p>
+<p class="p2"><br></p>
+<p class="p1">);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">window.addEventListener(</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>"orientationchange",</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>function () {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>window.setTimeout(</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>fitBoard,</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>150</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1">);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">document.addEventListener(</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>"click",</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>enterFullscreen</p>
+<p class="p2"><br></p>
+<p class="p1">);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">document.addEventListener(</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>"visibilitychange",</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>function () {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.visibilityState</p>
+<p class="p1"><span class="Apple-converted-space">      </span>===</p>
+<p class="p1"><span class="Apple-converted-space">      </span>"visible"</p>
+<p class="p1"><span class="Apple-converted-space">    </span>) {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>fitBoard();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>applyNightDimming();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>requestWakeLock();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1">);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/* =========================================================</p>
+<p class="p1"><span class="Apple-converted-space">   </span>GO</p>
+<p class="p1"><span class="Apple-converted-space">   </span>========================================================= */</p>
+<p class="p2"><br></p>
+<p class="p1">startApp();</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;/script&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;/html&gt;</p>
 </body>
-
 </html>
