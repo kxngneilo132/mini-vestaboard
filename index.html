@@ -1,73 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
 
 <meta
   name="viewport"
-  content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+  content="width=device-width, initial-scale=1"
 >
 
+<meta name="theme-color" content="#080808">
+<meta name="referrer" content="no-referrer">
+
 <meta
-  name="theme-color"
-  content="#080808"
+  http-equiv="Content-Security-Policy"
+  content="default-src 'self' data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self'; object-src 'none'; base-uri 'none'"
 >
 
 <title>Mini Vestaboard</title>
 
 <style>
-
-:root {
-  --board-bg: #080808;
-  --tile-top: #242424;
-  --tile-bottom: #171717;
-  --tile-text: #f1f0e9;
-  --gap: clamp(2px, .34vw, 6px);
-  --radius: clamp(2px, .30vw, 5px);
-}
-
 * {
   box-sizing: border-box;
 }
 
-html,
 body {
-  width: 100%;
-  height: 100%;
   margin: 0;
-  overflow: hidden;
-  background: var(--board-bg);
-  overscroll-behavior: none;
-  touch-action: manipulation;
-  -webkit-user-select: none;
-  user-select: none;
-  cursor: none;
-}
-
-body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   font-family: Arial, Helvetica, sans-serif;
-  transition: filter .5s ease;
+  background: #080808;
+  color: #eeeeee;
 }
 
-body.night-dim {
-  filter: brightness(.58);
+button,
+input,
+select {
+  font: inherit;
 }
 
-#board-wrapper {
-  width: 100vw;
+button {
+  cursor: pointer;
+  border: 0;
+  border-radius: 5px;
+  background: #efbe64;
+  color: #17130b;
+  padding: 12px 18px;
+  font-weight: bold;
+}
+
+button.secondary {
+  background: #303336;
+  color: #eeeeee;
+}
+
+input,
+select {
+  display: block;
+  width: 100%;
+  margin: 7px 0 17px;
+  padding: 11px;
+  border: 1px solid #53565b;
+  border-radius: 4px;
+  background: #161819;
+  color: white;
+}
+
+input[type="checkbox"] {
+  display: inline;
+  width: auto;
+  margin-right: 8px;
+}
+
+label {
+  display: block;
+  line-height: 1.5;
+}
+
+h1 {
+  font-size: 28px;
+}
+
+h2 {
+  font-size: 20px;
+}
+
+.hint,
+.status {
+  color: #bfc2c5;
+  line-height: 1.55;
+  font-size: 14px;
+}
+
+.status {
+  min-height: 24px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* DISPLAY */
+
+.display {
   height: 100vh;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 2vh 1.5vw;
-
+  overflow: hidden;
   background:
     radial-gradient(
       circle at center,
@@ -76,54 +110,45 @@ body.night-dim {
     );
 }
 
-#board {
-  display: grid;
-
-  grid-template-columns:
-    repeat(22, minmax(0, 1fr));
-
-  grid-template-rows:
-    repeat(6, minmax(0, 1fr));
-
-  gap: var(--gap);
-
-  transition:
-    transform 1s ease;
+.board-shell {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 0;
+  border: 0;
+  background: transparent;
 }
 
-.tile {
+.board-row {
+  white-space: nowrap;
+  height: 16.666666%;
+}
+
+.flap {
+  display: inline-block;
+  vertical-align: top;
   position: relative;
 
-  min-width: 0;
-  min-height: 0;
+  width: 4.545454%;
+  height: 100%;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
+  border: 2px solid #080909;
+  border-radius: 3px;
   overflow: hidden;
-
-  border-radius:
-    var(--radius);
 
   background:
     linear-gradient(
       to bottom,
-      var(--tile-top) 0%,
+      #242424 0%,
       #1c1c1c 48%,
       #0c0c0c 49%,
       #0c0c0c 51%,
       #1a1a1a 52%,
-      var(--tile-bottom) 100%
+      #171717 100%
     );
 
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.08),
-    inset 0 -2px 4px rgba(0,0,0,.9),
-    0 2px 3px rgba(0,0,0,.72);
-
-  color:
-    var(--tile-text);
+  color: #f1f0e9;
 
   font-family:
     "Arial Narrow",
@@ -132,2695 +157,1199 @@ body.night-dim {
     Helvetica,
     sans-serif;
 
-  font-size:
-    clamp(12px, 2.75vw, 34px);
-
-  font-weight:
-    700;
-
-  line-height:
-    1;
-
-  text-align:
-    center;
-
-  text-shadow:
-    0 1px 2px rgba(0,0,0,.9);
-
-  transform:
-    translateZ(0);
-}
-
-.tile::after {
-  content: "";
-
-  position: absolute;
-
-  left: 0;
-  right: 0;
-  top: 50%;
-
-  height: 1px;
-
-  background:
-    rgba(0,0,0,.96);
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .9);
 
   box-shadow:
-    0 1px 0 rgba(255,255,255,.04);
-
-  pointer-events:
-    none;
+    inset 0 1px rgba(255, 255, 255, .08),
+    inset 0 -2px 4px rgba(0, 0, 0, .9);
 }
 
-.tile::before {
+.flap:after {
   content: "";
-
   position: absolute;
-
-  left: 4%;
-  right: 4%;
-
-  top:
-    calc(50% - 1px);
-
-  height: 3px;
-
-  border-left:
-    1px solid rgba(255,255,255,.06);
-
-  border-right:
-    1px solid rgba(255,255,255,.06);
-
-  pointer-events:
-    none;
+  top: 50%;
+  left: 0;
+  right: 0;
+  border-top: 2px solid #0a0a0b;
+  box-shadow: 0 1px rgba(255, 255, 255, .04);
 }
 
-.character {
-  position: relative;
-
-  z-index: 2;
-
-  transform:
-    translateY(-1%);
+.flip {
+  animation: flap 96ms ease-out;
 }
 
-.flipping {
-  animation:
-    tileFlip
-    96ms
-    linear;
-}
-
-@keyframes tileFlip {
-
+@keyframes flap {
   0% {
-    transform:
-      perspective(160px)
-      rotateX(0deg);
-
-    filter:
-      brightness(1);
+    transform: perspective(160px) rotateX(0deg);
   }
 
   50% {
-    transform:
-      perspective(160px)
-      rotateX(-58deg);
-
-    filter:
-      brightness(.55);
+    transform: perspective(160px) rotateX(-58deg);
   }
 
   100% {
-    transform:
-      perspective(160px)
-      rotateX(0deg);
-
-    filter:
-      brightness(1);
+    transform: perspective(160px) rotateX(0deg);
   }
-
 }
 
+.color-yellow { background: #d6b43d; }
+.color-blue   { background: #3d79a5; }
+.color-orange { background: #d46f31; }
+.color-purple { background: #73599a; }
+.color-green  { background: #4f8c56; }
+.color-red    { background: #b9413c; }
+.color-white  { background: #d9d6cb; }
 
-/* COLOR TILES */
-
-.tile.color-red {
-  background: #b9413c !important;
+.night .board-shell {
+  opacity: .58;
 }
 
-.tile.color-orange {
-  background: #d46f31 !important;
-}
+/* CONTROLS */
 
-.tile.color-yellow {
-  background: #d6b43d !important;
-}
-
-.tile.color-green {
-  background: #4f8c56 !important;
-}
-
-.tile.color-blue {
-  background: #3d79a5 !important;
-}
-
-.tile.color-purple {
-  background: #73599a !important;
-}
-
-.tile.color-white {
-  background: #d9d6cb !important;
-}
-
-.tile.color-red .character,
-.tile.color-orange .character,
-.tile.color-yellow .character,
-.tile.color-green .character,
-.tile.color-blue .character,
-.tile.color-purple .character,
-.tile.color-white .character {
-
-  color:
-    transparent;
-
-  text-shadow:
-    none;
-}
-
-
-/* FULLSCREEN HINT */
-
-#tap-hint {
+.board-toolbar {
   position: fixed;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
 
-  left: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
-  bottom:
-    max(
-      10px,
-      env(safe-area-inset-bottom)
-    );
-
-  transform:
-    translateX(-50%);
-
-  z-index:
-    10;
-
-  padding:
-    6px 10px;
-
-  border-radius:
-    999px;
-
-  background:
-    rgba(0,0,0,.54);
-
-  color:
-    rgba(255,255,255,.66);
-
-  font:
-    12px/1
-    Arial,
-    Helvetica,
-    sans-serif;
-
-  opacity:
-    0;
-
-  pointer-events:
-    none;
-
-  transition:
-    opacity
-    180ms
-    ease;
+  font-size: 14px;
+  transition: opacity .3s;
 }
 
-#tap-hint.show {
+.board-toolbar button {
+  padding: 9px 12px;
+}
+
+.board-toolbar.faded {
+  opacity: 0;
+}
+
+.board-toolbar:hover,
+.board-toolbar:focus-within {
   opacity: 1;
 }
 
-@media
-(prefers-reduced-motion: reduce) {
+/* SETTINGS */
 
-  .flipping {
-    animation: none;
-  }
+.settings-overlay {
+  position: fixed;
+  z-index: 10;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 
+  overflow: auto;
+  background: rgba(0, 0, 0, .88);
+  padding: 20px;
 }
 
-</style>
+.settings-inner {
+  max-width: 540px;
+  margin: 20px auto;
+  padding: 24px;
+  background: #202224;
+  border: 1px solid #454545;
+  border-radius: 8px;
+}
 
+.settings-inner h1 {
+  margin-top: 10px;
+}
+
+.settings-inner p {
+  line-height: 1.6;
+}
+
+.settings-overlay button {
+  margin: 6px 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flip {
+    animation: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .board-toolbar {
+    display: block;
+  }
+
+  .board-toolbar .status {
+    display: block;
+  }
+
+  .board-toolbar button {
+    padding: 8px;
+    font-size: 14px;
+  }
+}
+</style>
 </head>
 
+<body class="display">
 
-<body>
+<main
+  id="board"
+  class="board-shell"
+  role="img"
+  aria-label="Mini split-flap display"
+></main>
 
-<div id="board-wrapper">
+<footer id="toolbar" class="board-toolbar">
+  <span id="connection" class="status" role="status">
+    Tap once for fullscreen and sound
+  </span>
 
-  <div
-    id="board"
-    aria-label="Mini split-flap display"
-  ></div>
+  <div>
+    <button id="start">Start display</button>
+    <button id="settings-button" class="secondary">
+      Settings
+    </button>
+  </div>
+</footer>
 
-</div>
+<section
+  id="settings"
+  class="hidden"
+  aria-label="Display settings"
+>
+  <div class="settings-inner">
 
+    <button id="close-settings" class="secondary">
+      Back to board
+    </button>
 
-<div id="tap-hint">
-  Tap once for fullscreen
-</div>
+    <h1>Make it yours</h1>
 
+    <label>
+      Color pattern
+
+      <select id="pattern">
+        <option value="corners">
+          Original colored corners
+        </option>
+        <option value="border">
+          Colored border
+        </option>
+        <option value="rainbow">
+          Rainbow top &amp; bottom
+        </option>
+        <option value="none">
+          No color accents
+        </option>
+      </select>
+    </label>
+
+    <p class="hint">
+      Patterns decorate the time-based and holiday messages.
+      Letters are never covered. Quotes and the clock keep
+      their original plain style.
+    </p>
+
+    <label>
+      <input id="sound" type="checkbox">
+      Quiet mechanical flap sound
+    </label>
+
+    <label>
+      Sound level
+
+      <input
+        id="volume"
+        type="range"
+        min="0"
+        max="0.4"
+        step="0.01"
+      >
+    </label>
+
+    <button id="test-sound">Test sound</button>
+
+    <p class="hint">
+      6 AM–5 PM: quiet clicks.
+      5–10 PM: softer clicks.
+      10 PM–6 AM: silent and dimmed.
+      Sound starts after a tap and must be unlocked
+      again after reloading.
+    </p>
+
+    <p id="save-status" class="status" role="status"></p>
+
+    <h2>Works offline</h2>
+
+    <p id="offline-status" class="hint">
+      Checking offline support…
+    </p>
+
+    <p class="hint">
+      No account, location access, calendar, tracking,
+      or external data services. Only these display
+      preferences are saved on this device.
+      The clock uses the tablet's time.
+    </p>
+
+    <p class="hint">
+      GitHub Pages needs a connection for the first visit.
+      Its normal hosting logs still apply.
+      For no hosting requests, open a saved local copy
+      of this file instead.
+    </p>
+
+  </div>
+</section>
+
+<noscript>
+  Enable JavaScript to show the board.
+</noscript>
 
 <script>
+/* =====================================================
+   YOUR ORIGINAL MESSAGES
 
-"use strict";
+   Each array contains six board rows.
+   Keep individual lines at 22 characters or fewer.
+   ===================================================== */
 
-
-/* =========================================================
-   BASIC BOARD SETTINGS
-   ========================================================= */
-
-const ROWS = 6;
-
-const COLUMNS = 22;
-
-const TILE_COUNT =
-  ROWS * COLUMNS;
-
-
-const BOARD_ASPECT =
-  1.87;
-
-
-const FLIP_SPEED_MS =
-  62;
-
-
-const MIN_FLIPS =
-  3;
-
-
-const EXTRA_FLIPS =
-  4;
-
-
-const FLIP_CHARACTERS =
-  "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!?$#@&+-";
-
-
-/* =========================================================
-   USER SETTINGS
-   ========================================================= */
-
-
-/*
-   Normal message duration.
-*/
-
-const DEFAULT_SCENE_SECONDS =
-  18;
-
-
-/*
-   Time-specific messages.
-*/
-
-const TIME_MESSAGE_SECONDS =
-  24;
-
-
-/*
-   Date/time display duration.
-*/
-
-const DATE_TIME_SECONDS =
-  12;
-
-
-/*
-   Quote display duration.
-*/
-
-const QUOTE_SECONDS =
-  22;
-
-
-/*
-   Automatically reload webpage.
-
-   This helps the Fire pick up
-   new GitHub edits.
-
-   Set to 0 to disable.
-*/
-
-const AUTO_REFRESH_HOURS =
-  6;
-
-
-/*
-   Dim the page during sleep hours.
-*/
-
-const ENABLE_NIGHT_DIM =
-  true;
-
-
-/*
-   Night dim begins at:
-
-   22 = 10 PM
-*/
-
-const NIGHT_DIM_START =
-  22;
-
-
-/*
-   Returns to normal at:
-
-   6 = 6 AM
-*/
-
-const NIGHT_DIM_END =
-  6;
-
-
-const SHOW_FULLSCREEN_HINT =
-  true;
-
-
-
-/* =========================================================
-   MORNING MESSAGES
-   6:00 AM - 11:59 AM
-   ========================================================= */
-
-const morningMessages = [
-
-  [
-    "",
-    "GOOD MORNING",
-    "",
-    "START WITH PURPOSE",
-    "",
-    ""
+window.ORIGINAL_CONTENT = {
+  morningMessages: [
+    ["", "GOOD MORNING", "", "START WITH PURPOSE", "", ""],
+    ["", "NEW DAY", "", "NEW OPPORTUNITY", "", ""],
+    ["", "START STRONG", "", "MAKE TODAY COUNT", "", ""],
+    ["", "GOOD MORNING", "", "YOU SET THE TONE", "", ""],
+    ["", "TODAY IS YOURS", "", "GO MAKE IT COUNT", "", ""],
+    ["", "RISE AND MOVE", "", "ONE STEP FORWARD", "", ""]
   ],
 
-  [
-    "",
-    "NEW DAY",
-    "",
-    "NEW OPPORTUNITY",
-    "",
-    ""
+  afternoonMessages: [
+    ["", "KEEP GOING", "", "YOU'RE NOT DONE YET", "", ""],
+    ["", "SMALL STEPS", "", "STILL MOVE FORWARD", "", ""],
+    ["", "STAY FOCUSED", "", "FINISH WITH PURPOSE", "", ""],
+    ["", "KEEP BUILDING", "", "MOMENTUM MATTERS", "", ""],
+    ["", "TRUST THE PROCESS", "", "KEEP MOVING", "", ""],
+    ["", "HALFWAY THERE", "", "KEEP THE ENERGY", "", ""]
   ],
 
-  [
-    "",
-    "START STRONG",
-    "",
-    "MAKE TODAY COUNT",
-    "",
-    ""
+  eveningMessages: [
+    ["", "SLOW DOWN", "", "YOU DID ENOUGH", "", ""],
+    ["", "WIND DOWN", "", "LET TODAY SETTLE", "", ""],
+    ["", "TAKE IT EASY", "", "ENJOY YOUR EVENING", "", ""],
+    ["", "LOOK BACK", "", "NOTICE THE PROGRESS", "", ""],
+    ["", "REST IS PART", "", "OF THE PROCESS", "", ""],
+    ["", "EXHALE", "", "TOMORROW CAN WAIT", "", ""]
   ],
 
-  [
-    "",
-    "GOOD MORNING",
-    "",
-    "YOU SET THE TONE",
-    "",
-    ""
+  nightMessages: [
+    [
+      "",
+      "SLEEP TIGHT",
+      "",
+      "TOMORROW IS",
+      "A FRESH START",
+      ""
+    ],
+    ["", "GOOD NIGHT", "", "REST YOUR MIND", "", ""],
+    ["", "REST WELL", "", "YOU EARNED IT", "", ""],
+    ["", "LET THE DAY GO", "", "TOMORROW IS NEW", "", ""],
+    ["", "TIME TO REST", "", "RECHARGE FOR TOMORROW", "", ""],
+    ["", "SLEEP WELL", "", "START FRESH TOMORROW", "", ""]
   ],
 
-  [
-    "",
-    "TODAY IS YOURS",
-    "",
-    "GO MAKE IT COUNT",
-    "",
-    ""
+  inspirationalQuotes: [
+    ["", "PROGRESS", "", "OVER PERFECTION", "", ""],
+    [
+      "",
+      "DISCIPLINE BUILDS",
+      "",
+      "WHAT MOTIVATION STARTS",
+      "",
+      ""
+    ],
+    ["", "BE PROUD", "", "THEN KEEP GOING", "", ""],
+    ["", "CONSISTENCY", "", "CHANGES EVERYTHING", "", ""],
+    ["", "DO THE NEXT", "", "RIGHT THING", "", ""],
+    ["", "YOUR FUTURE", "", "NEEDS TODAY'S EFFORT", "", ""]
   ],
 
-  [
-    "",
-    "RISE AND MOVE",
-    "",
-    "ONE STEP FORWARD",
-    "",
-    ""
-  ]
+  specialDates: {
+    "01-01": [
+      "",
+      "HAPPY NEW YEAR",
+      "",
+      "NEW YEAR NEW START",
+      "",
+      ""
+    ],
 
-];
-
-
-
-/* =========================================================
-   AFTERNOON MESSAGES
-   12 PM - 4:59 PM
-   ========================================================= */
-
-const afternoonMessages = [
-
-  [
-    "",
-    "KEEP GOING",
-    "",
-    "YOU'RE NOT DONE YET",
-    "",
-    ""
-  ],
-
-  [
-    "",
-    "SMALL STEPS",
-    "",
-    "STILL MOVE FORWARD",
-    "",
-    ""
-  ],
-
-  [
-    "",
-    "STAY FOCUSED",
-    "",
-    "FINISH WITH PURPOSE",
-    "",
-    ""
-  ],
-
-  [
-    "",
-    "KEEP BUILDING",
-    "",
-    "MOMENTUM MATTERS",
-    "",
-    ""
-  ],
-
-  [
-    "",
-    "TRUST THE PROCESS",
-    "",
-    "KEEP MOVING",
-    "",
-    ""
-  ],
-
-  [
-    "",
-    "HALFWAY THERE",
-    "",
-    "KEEP THE ENERGY",
-    "",
-    ""
-  ]
-
-];
-
-
-
-/* =========================================================
-   EVENING MESSAGES
-   5 PM - 9:59 PM
-   ========================================================= */
-
-const eveningMessages = [
-
-  [
-    "",
-    "SLOW DOWN",
-    "",
-    "YOU DID ENOUGH",
-    "",
-    ""
-  ],
-
-  [
-    "",
-    "WIND DOWN",
-    "",
-    "LET TODAY SETTLE",
-    "",
-    ""
-  ],
-
-  [
-    "",
-    "TAKE IT EASY",
-    "",
-    "ENJOY YOUR EVENING",
-    "",
-    ""
-  ],
-
-  [
-    "",
-    "LOOK BACK",
-    "",
-    "NOTICE THE PROGRESS",
-    "",
-    ""
-  ],
-
-  [
-    "",
-    "REST IS PART",
-    "",
-    "OF THE PROCESS",
-    "",
-    ""
-  ],
-
-  [
-    "",
-    "EXHALE",
-    "",
-    "TOMORROW CAN WAIT",
-    "",
-    ""
-  ]
-
-];
-
-
-
-/* =========================================================
-   NIGHT MESSAGES
-   10 PM - 5:59 AM
-   ========================================================= */
-
-const nightMessages = [
-
-  [
-    "",
-    "SLEEP TIGHT",
-    "",
-    "TOMORROW IS",
-    "A FRESH START",
-    ""
-  ],
-
-  [
-    "",
-    "GOOD NIGHT",
-    "",
-    "REST YOUR MIND",
-    "",
-    ""
-  ],
-
-  [
-    "",
-    "REST WELL",
-    "",
-    "YOU EARNED IT",
-    "",
-    ""
-  ],
-
-  [
-    "",
-    "LET THE DAY GO",
-    "",
-    "TOMORROW IS NEW",
-    "",
-    ""
-  ],
-
-  [
-    "",
-    "TIME TO REST",
-    "",
-    "RECHARGE FOR TOMORROW",
-    "",
-    ""
-  ],
-
-  [
-    "",
-    "SLEEP WELL",
-    "",
-    "START FRESH TOMORROW",
-    "",
-    ""
-  ]
-
-];
-
-
-
-/* =========================================================
-   GENERAL INSPIRATIONAL QUOTES
-   ========================================================= */
-
-const inspirationalQuotes = [
-
-  [
-    "",
-    "PROGRESS",
-    "",
-    "OVER PERFECTION",
-    "",
-    ""
-  ],
-
-  [
-    "",
-    "DISCIPLINE BUILDS",
-    "",
-    "WHAT MOTIVATION STARTS",
-    "",
-    ""
-  ],
-
-  [
-    "",
-    "BE PROUD",
-    "",
-    "THEN KEEP GOING",
-    "",
-    ""
-  ],
-
-  [
-    "",
-    "CONSISTENCY",
-    "",
-    "CHANGES EVERYTHING",
-    "",
-    ""
-  ],
-
-  [
-    "",
-    "DO THE NEXT",
-    "",
-    "RIGHT THING",
-    "",
-    ""
-  ],
-
-  [
-    "",
-    "YOUR FUTURE",
-    "",
-    "NEEDS TODAY'S EFFORT",
-    "",
-    ""
-  ]
-
-];
-
-
-
-/* =========================================================
-   SPECIAL DATES
-
-   FORMAT:
-
-   MM-DD
-
-   Add birthdays, anniversaries,
-   holidays, etc.
-   ========================================================= */
-
-const specialDates = {
-
-  "01-01": [
-
-    "",
-    "HAPPY NEW YEAR",
-    "",
-    "NEW YEAR NEW START",
-    "",
-    ""
-
-  ],
-
-
-  "12-25": [
-
-    "",
-    "MERRY CHRISTMAS",
-    "",
-    "ENJOY THE DAY",
-    "",
-    ""
-
-  ]
-
+    "12-25": [
+      "",
+      "MERRY CHRISTMAS",
+      "",
+      "ENJOY THE DAY",
+      "",
+      ""
+    ]
+  }
 };
 
 
+/* =====================================================
+   TEXT FORMATTING
+   ===================================================== */
 
-/* =========================================================
-   COLOR SETTINGS
-   ========================================================= */
+(function (root) {
+  "use strict";
 
-const VALID_COLORS =
+  var C = {};
 
-  new Set([
+  C.clean = function (s) {
+    s = String(s || "");
 
-    "red",
+    if (s.normalize) {
+      s = s.normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+    }
 
-    "orange",
+    return s
+      .replace(/[‘’]/g, "'")
+      .replace(/[“”]/g, '"')
+      .replace(/[–—]/g, "-")
+      .toUpperCase()
+      .replace(/[^\x20-\x7E\n]/g, " ");
+  };
 
-    "yellow",
+  C.lines = function (text) {
+    var out = [];
+    var paragraphs = C.clean(text).split("\n");
 
-    "green",
+    paragraphs.forEach(function (line) {
+      var words = line.split(/ +/);
+      var current = "";
 
-    "blue",
+      words.forEach(function (word) {
+        if (!word) {
+          return;
+        }
 
-    "purple",
+        if (
+          current &&
+          current.length + word.length + 1 > 22
+        ) {
+          out.push(current);
+          current = "";
+        }
 
-    "white"
+        while (word.length > 22) {
+          if (current) {
+            out.push(current);
+            current = "";
+          }
 
-  ]);
+          out.push(word.slice(0, 22));
+          word = word.slice(22);
+        }
+
+        if (word) {
+          current += (current ? " " : "") + word;
+        }
+      });
+
+      out.push(current);
+    });
+
+    return out;
+  };
+
+  C.fits = function (text) {
+    return C.lines(text).length <= 6;
+  };
+
+  C.frame = function (text) {
+    var lines = C.lines(text).slice(0, 6);
+    var rows = [];
+    var top = Math.floor((6 - lines.length) / 2);
+
+    for (var i = 0; i < 6; i++) {
+      var s = lines[i - top] || "";
+      var left = Math.floor((22 - s.length) / 2);
+
+      rows.push(
+        (
+          new Array(left + 1).join(" ") +
+          s +
+          new Array(23).join(" ")
+        ).slice(0, 22)
+      );
+    }
+
+    return rows.join("");
+  };
+
+  C.period = function (hour) {
+    if (hour < 6 || hour >= 22) {
+      return "night";
+    }
+
+    if (hour < 12) {
+      return "morning";
+    }
+
+    if (hour < 17) {
+      return "afternoon";
+    }
+
+    return "evening";
+  };
+
+  root.BoardCore = C;
+
+}(window));
 
 
-const COLOR_CLASSES =
+/* =====================================================
+   DISPLAY APPLICATION
+   ===================================================== */
 
-  Array
-    .from(
-      VALID_COLORS
-    )
-    .map(
+(function () {
+  "use strict";
 
-      function (color) {
+  var C = BoardCore;
 
-        return (
-          "color-"
-          +
-          color
-        );
+  var settings = {
+    sound: false,
+    volume: 0.18,
+    pattern: "corners"
+  };
 
+  /* Restore preferences saved on this device. */
+
+  try {
+    var saved = JSON.parse(
+      localStorage.getItem("mini-board-preferences-v1")
+    );
+
+    if (saved) {
+      settings.sound = !!saved.sound;
+
+      settings.volume = Math.max(
+        0,
+        Math.min(0.4, Number(saved.volume) || 0)
+      );
+
+      if (
+        ["corners", "border", "rainbow", "none"]
+          .indexOf(saved.pattern) >= 0
+      ) {
+        settings.pattern = saved.pattern;
+      }
+    }
+  } catch (e) {}
+
+  var board = document.getElementById("board");
+  var cells = [];
+  var last = "";
+  var audio = null;
+
+  var sceneUntil = 0;
+  var rotationStep = 0;
+  var lastTime = -1;
+  var lastQuote = -1;
+
+  var activeScene = null;
+  var previousPeriod = "";
+  var wakeLock = null;
+
+  var colorLast = "";
+  var animation = 0;
+
+  function id(name) {
+    return document.getElementById(name);
+  }
+
+  function status(text) {
+    id("connection").textContent = text;
+  }
+
+
+  /* ===================================================
+     CREATE AND SIZE THE BOARD
+     =================================================== */
+
+  function size() {
+    var width = Math.min(
+      window.innerWidth * 0.96,
+      window.innerHeight * 0.92 * 1.87
+    );
+
+    var height = width / 1.87;
+
+    board.style.width = width + "px";
+    board.style.height = height + "px";
+
+    board.style.fontSize =
+      Math.min(34, width / 22 * 0.7) + "px";
+
+    board.style.lineHeight =
+      (height / 6 - 4) + "px";
+  }
+
+  for (var r = 0; r < 6; r++) {
+    var row = document.createElement("div");
+    row.className = "board-row";
+
+    for (var c = 0; c < 22; c++) {
+      var tile = document.createElement("span");
+
+      tile.className = "flap";
+      tile.textContent = " ";
+
+      row.appendChild(tile);
+      cells.push(tile);
+    }
+
+    board.appendChild(row);
+  }
+
+  size();
+
+  window.addEventListener("resize", size);
+
+
+  /* ===================================================
+     GENERATED SOUND — NO AUDIO FILES
+     =================================================== */
+
+  function clickSound() {
+    var period = C.period(new Date().getHours());
+
+    if (
+      !audio ||
+      audio.state === "suspended" ||
+      !settings.sound ||
+      period === "night"
+    ) {
+      return;
+    }
+
+    try {
+      var buffer = audio.createBuffer(
+        1,
+        Math.floor(audio.sampleRate * 0.045),
+        audio.sampleRate
+      );
+
+      var samples = buffer.getChannelData(0);
+
+      for (var i = 0; i < samples.length; i++) {
+        samples[i] =
+          (Math.random() * 2 - 1) *
+          Math.pow(1 - i / samples.length, 5);
       }
 
-    );
+      var source = audio.createBufferSource();
+      var gain = audio.createGain();
+
+      source.buffer = buffer;
+
+      gain.gain.value =
+        Math.max(
+          0,
+          Math.min(0.4, Number(settings.volume) || 0)
+        ) *
+        (period === "evening" ? 0.3 : 1);
+
+      source.connect(gain);
+      gain.connect(audio.destination);
+      source.start(0);
+
+    } catch (e) {}
+  }
 
 
+  /* ===================================================
+     COLORS AND FLAP ANIMATION
+     =================================================== */
 
-/* =========================================================
-   INTERNAL VARIABLES
-   ========================================================= */
+  function paint(text, color) {
+    var frame = C.frame(text);
+    var pattern = settings.pattern || "corners";
+    var signature = (color || "") + pattern;
 
-const board =
-  document
-    .getElementById(
-      "board"
-    );
+    if (
+      frame === last &&
+      signature === colorLast
+    ) {
+      return;
+    }
 
+    board.setAttribute("aria-label", text);
 
-const tapHint =
-  document
-    .getElementById(
-      "tap-hint"
-    );
+    animation++;
+    var generation = animation;
 
+    clickSound();
 
-const tiles =
-  [];
+    cells.forEach(function (element, i) {
+      var row = Math.floor(i / 22);
+      var col = i % 22;
 
+      var accent = false;
+      var hue = color;
 
-let sceneTimer =
-  null;
+      /* Only decorate blank cells. */
 
+      if (color && frame[i] === " ") {
+        if (pattern === "corners") {
+          accent =
+            (row === 0 || row === 5) &&
+            (col === 0 || col === 21);
+        } else if (pattern === "border") {
+          accent =
+            row === 0 ||
+            row === 5 ||
+            col === 0 ||
+            col === 21;
+        } else if (pattern === "rainbow") {
+          accent = row === 0 || row === 5;
+        }
 
-let animationGeneration =
-  0;
+        if (pattern === "rainbow") {
+          hue = [
+            "red",
+            "orange",
+            "yellow",
+            "green",
+            "blue",
+            "purple",
+            "white"
+          ][Math.floor(col / 22 * 7)];
+        }
+      }
 
+      var className =
+        "flap" +
+        (accent ? " color-" + hue : "");
 
-let wakeLock =
-  null;
+      element.className = className;
 
+      if (frame[i] === last[i]) {
+        element.textContent = frame[i];
+        return;
+      }
 
-let hintTimer =
-  null;
+      var reducedMotion =
+        window.matchMedia &&
+        window.matchMedia(
+          "(prefers-reduced-motion: reduce)"
+        ).matches;
 
+      if (reducedMotion) {
+        element.textContent = frame[i];
+        return;
+      }
 
-let lastTimeMessageIndex =
-  -1;
+      var flips = 3 + Math.floor(Math.random() * 5);
+      var count = 0;
 
+      setTimeout(function () {
+        if (generation !== animation) {
+          return;
+        }
 
-let lastQuoteIndex =
-  -1;
+        var timer = setInterval(function () {
+          if (generation !== animation) {
+            clearInterval(timer);
+            return;
+          }
 
+          count++;
 
-let rotationStep =
-  0;
+          element.className = className;
 
+          void element.offsetWidth;
 
-let shiftIndex =
-  0;
+          element.className = className + " flip";
 
+          if (count >= flips) {
+            element.textContent = frame[i];
+            clearInterval(timer);
+          } else {
+            element.textContent =
+              "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!?$#@&+-"[
+                Math.floor(Math.random() * 40)
+              ];
+          }
 
+        }, 62);
 
-/* =========================================================
-   CREATE BOARD
-   ========================================================= */
-
-function createBoard() {
-
-  const fragment =
-    document
-      .createDocumentFragment();
-
-
-  for (
-    let i = 0;
-    i < TILE_COUNT;
-    i++
-  ) {
-
-    const tile =
-      document
-        .createElement(
-          "div"
-        );
-
-
-    tile.className =
-      "tile";
-
-
-    const character =
-      document
-        .createElement(
-          "span"
-        );
-
-
-    character.className =
-      "character";
-
-
-    character.textContent =
-      " ";
-
-
-    tile.appendChild(
-      character
-    );
-
-
-    fragment.appendChild(
-      tile
-    );
-
-
-    tiles.push({
-
-      tile:
-        tile,
-
-      character:
-        character
+      }, col * 11 + row * 33 + Math.random() * 70);
 
     });
 
+    last = frame;
+    colorLast = signature;
   }
 
 
-  board.appendChild(
-    fragment
-  );
-
-}
-
-
-
-/* =========================================================
-   FIT BOARD TO DISPLAY
-   ========================================================= */
-
-function fitBoard() {
-
-  const maxWidth =
-    Math.max(
-      1,
-      window.innerWidth * 0.96
-    );
-
-
-  const maxHeight =
-    Math.max(
-      1,
-      window.innerHeight * 0.92
-    );
-
-
-  let width =
-    maxWidth;
-
-
-  let height =
-    width / BOARD_ASPECT;
-
-
-  if (
-    height > maxHeight
-  ) {
-
-    height =
-      maxHeight;
-
-
-    width =
-      height * BOARD_ASPECT;
-
-  }
-
-
-  board.style.width =
-    Math.floor(width)
-    +
-    "px";
-
-
-  board.style.height =
-    Math.floor(height)
-    +
-    "px";
-
-}
-
-
-
-/* =========================================================
-   TEXT FORMATTING
-   ========================================================= */
-
-function normalizeText(value) {
-
-  return String(
-
-    value == null
-      ?
-      ""
-      :
-      value
-
-  )
-
-    .replace(
-      /[\u2018\u2019]/g,
-      "'"
-    )
-
-    .replace(
-      /[\u201C\u201D]/g,
-      '"'
-    )
-
-    .toUpperCase()
-
-    .slice(
-      0,
-      COLUMNS
-    );
-
-}
-
-
-
-function centerText(value) {
-
-  const text =
-    normalizeText(
-      value
-    );
-
-
-  const remaining =
-    COLUMNS
-    -
-    text.length;
-
-
-  const left =
-    Math.floor(
-      remaining / 2
-    );
-
-
-  const right =
-    remaining - left;
-
-
-  return (
-
-    " ".repeat(left)
-
-    +
-
-    text
-
-    +
-
-    " ".repeat(right)
-
-  );
-
-}
-
-
-
-function formatLines(lines) {
-
-  const output =
-    [];
-
-
-  for (
-    let row = 0;
-    row < ROWS;
-    row++
-  ) {
-
-    const currentLine =
-
-      (
-        lines
-        &&
-        lines[row] != null
-      )
-
-      ?
-
-      lines[row]
-
-      :
-
-      "";
-
-
-    const centered =
-      centerText(
-        currentLine
-      );
-
-
-    const characters =
-      centered.split(
-        ""
-      );
-
-
-    for (
-      let i = 0;
-      i < characters.length;
-      i++
-    ) {
-
-      output.push(
-        characters[i]
-      );
-
+  /* ===================================================
+     SCENE SELECTION
+     =================================================== */
+
+  function choose(length, previous) {
+    var next = Math.floor(Math.random() * length);
+
+    if (length > 1 && next === previous) {
+      return (
+        next +
+        1 +
+        Math.floor(Math.random() * (length - 1))
+      ) % length;
     }
 
+    return next;
   }
 
-
-  if (
-    output.length
-    !==
-    TILE_COUNT
-  ) {
-
-    throw new Error(
-
-      "Expected "
-      +
-      TILE_COUNT
-      +
-      " tiles but got "
-      +
-      output.length
-
+  function clockText(date) {
+    return (
+      (date.getHours() % 12 || 12) +
+      ":" +
+      ("0" + date.getMinutes()).slice(-2) +
+      (date.getHours() < 12 ? " AM" : " PM")
     );
-
   }
 
-
-  return output;
-
-}
-
-
-
-/* =========================================================
-   TILE COLORS
-   ========================================================= */
-
-function clearColors() {
-
-  for (
-    let i = 0;
-    i < tiles.length;
-    i++
-  ) {
-
-    tiles[i]
-      .tile
-      .classList
-      .remove
-      .apply(
-
-        tiles[i].tile.classList,
-
-        COLOR_CLASSES
-
-      );
-
-  }
-
-}
-
-
-
-function applyColors(colors) {
-
-  clearColors();
-
-
-  if (
-    !Array.isArray(
-      colors
-    )
-  ) {
-
-    return;
-
-  }
-
-
-  for (
-    let i = 0;
-    i < colors.length;
-    i++
-  ) {
-
-    const entry =
-      colors[i];
-
-
-    const row =
-      Number(
-        entry
-        &&
-        entry.row
-      );
-
-
-    const col =
-      Number(
-        entry
-        &&
-        entry.col
-      );
-
-
-    const color =
-      String(
-
-        (
-          entry
-          &&
-          entry.color
-        )
-
-        ||
-
-        ""
-
-      )
-        .toLowerCase();
-
-
-    if (
-
-      !Number.isInteger(row)
-
-      ||
-
-      !Number.isInteger(col)
-
-    ) {
-
-      continue;
-
-    }
-
-
-    if (
-
-      row < 0
-
-      ||
-
-      row >= ROWS
-
-      ||
-
-      col < 0
-
-      ||
-
-      col >= COLUMNS
-
-    ) {
-
-      continue;
-
-    }
-
-
-    if (
-      !VALID_COLORS.has(
-        color
-      )
-    ) {
-
-      continue;
-
-    }
-
-
-    tiles[
-      row * COLUMNS + col
-    ]
-      .tile
-      .classList
-      .add(
-        "color-" + color
-      );
-
-  }
-
-}
-
-
-
-/* =========================================================
-   FLIP ANIMATION
-   ========================================================= */
-
-function randomFlipCharacter() {
-
-  return (
-
-    FLIP_CHARACTERS[
-
-      Math.floor(
-
-        Math.random()
-
-        *
-
-        FLIP_CHARACTERS.length
-
-      )
-
-    ]
-
-  );
-
-}
-
-
-
-function animateTile(
-
-  index,
-
-  finalCharacter,
-
-  delay,
-
-  generation
-
-) {
-
-  const item =
-    tiles[index];
-
-
-  if (
-    !item
-    ||
-    item.character.textContent
-    ===
-    finalCharacter
-  ) {
-
-    return;
-
-  }
-
-
-  window.setTimeout(
-
-    function () {
-
-
-      if (
-        generation
-        !==
-        animationGeneration
-      ) {
-
-        return;
-
-      }
-
-
-      const totalFlips =
-
-        MIN_FLIPS
-
-        +
-
-        Math.floor(
-
-          Math.random()
-
-          *
-
-          (
-            EXTRA_FLIPS + 1
-          )
-
-        );
-
-
-      let flipCount =
-        0;
-
-
-      const interval =
-
-        window.setInterval(
-
-          function () {
-
-
-            if (
-              generation
-              !==
-              animationGeneration
-            ) {
-
-              window.clearInterval(
-                interval
-              );
-
-              return;
-
-            }
-
-
-            item
-              .tile
-              .classList
-              .remove(
-                "flipping"
-              );
-
-
-            void item
-              .tile
-              .offsetWidth;
-
-
-            item
-              .tile
-              .classList
-              .add(
-                "flipping"
-              );
-
-
-            flipCount++;
-
-
-            if (
-              flipCount
-              >=
-              totalFlips
-            ) {
-
-              window.clearInterval(
-                interval
-              );
-
-
-              item
-                .character
-                .textContent =
-                  finalCharacter;
-
-
-              item
-                .tile
-                .classList
-                .remove(
-                  "flipping"
-                );
-
-
-              return;
-
-            }
-
-
-            item
-              .character
-              .textContent =
-                randomFlipCharacter();
-
-          },
-
-          FLIP_SPEED_MS
-
-        );
-
-    },
-
-    delay
-
-  );
-
-}
-
-
-
-/* =========================================================
-   DISPLAY SCENE
-   ========================================================= */
-
-function displayScene(scene) {
-
-  if (
-    !scene
-  ) {
-
-    return;
-
-  }
-
-
-  animationGeneration++;
-
-
-  const generation =
-    animationGeneration;
-
-
-  const formatted =
-    formatLines(
-      scene.lines || []
-    );
-
-
-  applyColors(
-    scene.colors
-  );
-
-
-  for (
-    let index = 0;
-    index < formatted.length;
-    index++
-  ) {
-
-    const row =
-      Math.floor(
-        index / COLUMNS
-      );
-
-
-    const col =
-      index % COLUMNS;
-
-
-    const delay =
-
-      col * 11
-
-      +
-
-      row * 33
-
-      +
-
-      Math.random() * 70;
-
-
-    animateTile(
-
-      index,
-
-      formatted[index],
-
-      delay,
-
-      generation
-
-    );
-
-  }
-
-}
-
-
-
-/* =========================================================
-   RANDOM MESSAGE WITHOUT REPEATING
-   ========================================================= */
-
-function randomIndexAvoidRepeat(
-
-  length,
-
-  lastIndex
-
-) {
-
-  if (
-    length <= 1
-  ) {
-
-    return 0;
-
-  }
-
-
-  let index =
-    Math.floor(
-      Math.random() * length
-    );
-
-
-  if (
-    index === lastIndex
-  ) {
-
-    index =
-
-      (
-        index
-
-        +
-
-        1
-
-        +
-
-        Math.floor(
-          Math.random()
-          *
-          (length - 1)
-        )
-
-      )
-
-      %
-
-      length;
-
-  }
-
-
-  return index;
-
-}
-
-
-
-/* =========================================================
-   DETERMINE TIME PERIOD
-   ========================================================= */
-
-function getPeriodInfo() {
-
-  const hour =
-    new Date()
-      .getHours();
-
-
-  if (
-    hour >= 6
-    &&
-    hour < 12
-  ) {
-
-    return {
-
-      name:
-        "morning",
-
-      messages:
-        morningMessages,
-
-      color:
-        "yellow"
-
+  function nextScene(now) {
+    var date = new Date(now);
+    var period = C.period(date.getHours());
+
+    var colors = {
+      morning: "yellow",
+      afternoon: "blue",
+      evening: "orange",
+      night: "purple"
     };
 
-  }
+    var original = ORIGINAL_CONTENT;
 
+    var dateKey =
+      ("0" + (date.getMonth() + 1)).slice(-2) +
+      "-" +
+      ("0" + date.getDate()).slice(-2);
 
-  if (
-    hour >= 12
-    &&
-    hour < 17
-  ) {
+    var special = original.specialDates[dateKey];
 
-    return {
+    if (special && rotationStep % 4 === 0) {
+      rotationStep++;
 
-      name:
-        "afternoon",
-
-      messages:
-        afternoonMessages,
-
-      color:
-        "blue"
-
-    };
-
-  }
-
-
-  if (
-    hour >= 17
-    &&
-    hour < 22
-  ) {
-
-    return {
-
-      name:
-        "evening",
-
-      messages:
-        eveningMessages,
-
-      color:
-        "orange"
-
-    };
-
-  }
-
-
-  return {
-
-    name:
-      "night",
-
-    messages:
-      nightMessages,
-
-    color:
-      "purple"
-
-  };
-
-}
-
-
-
-/* =========================================================
-   COLORED CORNERS
-   ========================================================= */
-
-function coloredCorners(color) {
-
-  return [
-
-    {
-      row: 0,
-      col: 0,
-      color: color
-    },
-
-    {
-      row: 0,
-      col: 21,
-      color: color
-    },
-
-    {
-      row: 5,
-      col: 0,
-      color: color
-    },
-
-    {
-      row: 5,
-      col: 21,
-      color: color
+      return {
+        text: special.join("\n"),
+        color: "green",
+        duration: 30
+      };
     }
 
-  ];
-
-}
-
-
-
-/* =========================================================
-   TIME MESSAGE SCENE
-   ========================================================= */
-
-function buildTimeMessageScene() {
-
-  const period =
-    getPeriodInfo();
-
-
-  const index =
-    randomIndexAvoidRepeat(
-
-      period.messages.length,
-
-      lastTimeMessageIndex
-
-    );
-
-
-  lastTimeMessageIndex =
-    index;
-
-
-  return {
-
-    lines:
-      period.messages[index],
-
-    colors:
-      coloredCorners(
-        period.color
-      ),
-
-    duration:
-      TIME_MESSAGE_SECONDS
-
-  };
-
-}
-
-
-
-/* =========================================================
-   QUOTE SCENE
-   ========================================================= */
-
-function buildQuoteScene() {
-
-  const index =
-    randomIndexAvoidRepeat(
-
-      inspirationalQuotes.length,
-
-      lastQuoteIndex
-
-    );
-
-
-  lastQuoteIndex =
-    index;
-
-
-  return {
-
-    lines:
-      inspirationalQuotes[index],
-
-    colors:
-      [],
-
-    duration:
-      QUOTE_SECONDS
-
-  };
-
-}
-
-
-
-/* =========================================================
-   DATE + TIME SCENE
-   ========================================================= */
-
-function buildDateTimeScene() {
-
-  const now =
-    new Date();
-
-
-  const weekday =
-
-    new Intl.DateTimeFormat(
-
-      "en-US",
-
-      {
-        weekday:
-          "long"
-      }
-
-    )
-      .format(
-        now
-      );
-
-
-  const date =
-
-    new Intl.DateTimeFormat(
-
-      "en-US",
-
-      {
-        month:
-          "long",
-
-        day:
-          "numeric"
-      }
-
-    )
-      .format(
-        now
-      );
-
-
-  const time =
-
-    new Intl.DateTimeFormat(
-
-      "en-US",
-
-      {
-        hour:
-          "numeric",
-
-        minute:
-          "2-digit"
-      }
-
-    )
-      .format(
-        now
-      );
-
-
-  return {
-
-    lines: [
-
-      "",
-
-      weekday,
-
-      date,
-
-      "",
-
-      time,
-
-      ""
-
-    ],
-
-    colors:
-      [],
-
-    duration:
-      DATE_TIME_SECONDS
-
-  };
-
-}
-
-
-
-/* =========================================================
-   SPECIAL DATE SCENE
-   ========================================================= */
-
-function getSpecialDateScene() {
-
-  const now =
-    new Date();
-
-
-  const mm =
-
-    String(
-      now.getMonth() + 1
-    )
-      .padStart(
-        2,
-        "0"
-      );
-
-
-  const dd =
-
-    String(
-      now.getDate()
-    )
-      .padStart(
-        2,
-        "0"
-      );
-
-
-  const lines =
-
-    specialDates[
-      mm + "-" + dd
+    var pattern = [
+      "time",
+      "date",
+      "quote",
+      "time",
+      "quote"
     ];
 
-
-  if (
-    !lines
-  ) {
-
-    return null;
-
-  }
-
-
-  return {
-
-    lines:
-      lines,
-
-    colors:
-      coloredCorners(
-        "green"
-      ),
-
-    duration:
-      30
-
-  };
-
-}
-
-
-
-/* =========================================================
-   ROTATION LOGIC
-   ========================================================= */
-
-function getNextScene() {
-
-  const special =
-    getSpecialDateScene();
-
-
-  if (
-    special
-    &&
-    rotationStep % 4 === 0
-  ) {
+    var type = pattern[rotationStep % pattern.length];
 
     rotationStep++;
 
-    return special;
+    if (type === "date") {
+      var weekdays = [
+        "SUNDAY",
+        "MONDAY",
+        "TUESDAY",
+        "WEDNESDAY",
+        "THURSDAY",
+        "FRIDAY",
+        "SATURDAY"
+      ];
 
-  }
+      var months = [
+        "JANUARY",
+        "FEBRUARY",
+        "MARCH",
+        "APRIL",
+        "MAY",
+        "JUNE",
+        "JULY",
+        "AUGUST",
+        "SEPTEMBER",
+        "OCTOBER",
+        "NOVEMBER",
+        "DECEMBER"
+      ];
 
+      return {
+        text: [
+          "",
+          weekdays[date.getDay()],
+          months[date.getMonth()] + " " + date.getDate(),
+          "",
+          clockText(date),
+          ""
+        ].join("\n"),
 
-  /*
-     Normal repeating pattern:
+        duration: 12,
+        type: "date"
+      };
+    }
 
-     time-based message
-     date/time
-     quote
-     time-based message
-     quote
-  */
-
-  const pattern = [
-
-    "time",
-
-    "date",
-
-    "quote",
-
-    "time",
-
-    "quote"
-
-  ];
-
-
-  const type =
-
-    pattern[
-      rotationStep
-      %
-      pattern.length
-    ];
-
-
-  rotationStep++;
-
-
-  if (
-    type === "date"
-  ) {
-
-    return buildDateTimeScene();
-
-  }
-
-
-  if (
-    type === "quote"
-  ) {
-
-    return buildQuoteScene();
-
-  }
-
-
-  return buildTimeMessageScene();
-
-}
-
-
-
-/* =========================================================
-   PLAY NEXT SCENE
-   ========================================================= */
-
-function playNextScene() {
-
-  if (
-    sceneTimer !== null
-  ) {
-
-    window.clearTimeout(
-      sceneTimer
-    );
-
-
-    sceneTimer =
-      null;
-
-  }
-
-
-  const scene =
-    getNextScene();
-
-
-  displayScene(
-    scene
-  );
-
-
-  let duration =
-    Number(
-      scene.duration
-    );
-
-
-  if (
-
-    !Number.isFinite(
-      duration
-    )
-
-    ||
-
-    duration < 2
-
-  ) {
-
-    duration =
-      DEFAULT_SCENE_SECONDS;
-
-  }
-
-
-  sceneTimer =
-
-    window.setTimeout(
-
-      playNextScene,
-
-      duration * 1000
-
-    );
-
-}
-
-
-
-/* =========================================================
-   NIGHT DIMMING
-   ========================================================= */
-
-function applyNightDimming() {
-
-  if (
-    !ENABLE_NIGHT_DIM
-  ) {
-
-    document.body
-      .classList
-      .remove(
-        "night-dim"
+    if (type === "quote") {
+      lastQuote = choose(
+        original.inspirationalQuotes.length,
+        lastQuote
       );
 
-    return;
-
-  }
-
-
-  const hour =
-    new Date()
-      .getHours();
-
-
-  const shouldDim =
-
-    (
-      NIGHT_DIM_START
-      >
-      NIGHT_DIM_END
-    )
-
-    ?
-
-    (
-      hour >= NIGHT_DIM_START
-      ||
-      hour < NIGHT_DIM_END
-    )
-
-    :
-
-    (
-      hour >= NIGHT_DIM_START
-      &&
-      hour < NIGHT_DIM_END
-    );
-
-
-  document.body
-    .classList
-    .toggle(
-
-      "night-dim",
-
-      shouldDim
-
-    );
-
-}
-
-
-
-/* =========================================================
-   MICRO PIXEL SHIFT
-   ========================================================= */
-
-function applyPixelShift() {
-
-  const shifts = [
-
-    [0,0],
-
-    [1,0],
-
-    [0,1],
-
-    [-1,0],
-
-    [0,-1]
-
-  ];
-
-
-  shiftIndex =
-
-    (
-      shiftIndex + 1
-    )
-
-    %
-
-    shifts.length;
-
-
-  board.style.transform =
-
-    "translate("
-
-    +
-
-    shifts[shiftIndex][0]
-
-    +
-
-    "px,"
-
-    +
-
-    shifts[shiftIndex][1]
-
-    +
-
-    "px)";
-
-}
-
-
-
-/* =========================================================
-   FULLSCREEN
-   ========================================================= */
-
-function enterFullscreen() {
-
-  const element =
-    document.documentElement;
-
-
-  if (
-    document.fullscreenElement
-  ) {
-
-    return;
-
-  }
-
-
-  if (
-    typeof element.requestFullscreen
-    ===
-    "function"
-  ) {
-
-    try {
-
-      const result =
-        element.requestFullscreen();
-
-
-      if (
-
-        result
-
-        &&
-
-        typeof result.then
-        ===
-        "function"
-
-      ) {
-
-        result
-
-          .then(
-            hideFullscreenHint
-          )
-
-          .catch(
-            function () {}
-          );
-
-      }
-
-      else {
-
-        hideFullscreenHint();
-
-      }
-
+      return {
+        text:
+          original.inspirationalQuotes[lastQuote]
+            .join("\n"),
+
+        duration: 22
+      };
     }
 
-    catch (error) {}
+    var messages = original[
+      period + "Messages"
+    ].map(function (lines) {
+      return lines.join("\n");
+    });
 
-    return;
+    lastTime = choose(messages.length, lastTime);
 
+    return {
+      text: messages[lastTime],
+      duration: 24,
+      color: colors[period]
+    };
   }
 
-
-  if (
-    typeof element.webkitRequestFullscreen
-    ===
-    "function"
-  ) {
-
-    try {
-
-      element
-        .webkitRequestFullscreen();
-
-
-      hideFullscreenHint();
-
-    }
-
-    catch (error) {}
-
-  }
-
-}
-
-
-
-/* =========================================================
-   FULLSCREEN HINT
-   ========================================================= */
-
-function showFullscreenHint() {
-
-  if (
-    !SHOW_FULLSCREEN_HINT
-    ||
-    !tapHint
-  ) {
-
-    return;
-
-  }
-
-
-  tapHint
-    .classList
-    .add(
-      "show"
-    );
-
-
-  window.clearTimeout(
-    hintTimer
-  );
-
-
-  hintTimer =
-
-    window.setTimeout(
-
-      hideFullscreenHint,
-
-      4500
-
-    );
-
-}
-
-
-
-function hideFullscreenHint() {
-
-  if (
-    !tapHint
-  ) {
-
-    return;
-
-  }
-
-
-  tapHint
-    .classList
-    .remove(
-      "show"
-    );
-
-
-  window.clearTimeout(
-    hintTimer
-  );
-
-}
-
-
-
-/* =========================================================
-   WAKE LOCK
-   ========================================================= */
-
-function requestWakeLock() {
-
-  if (
-
-    !navigator
-
-    ||
-
-    !navigator.wakeLock
-
-    ||
-
-    typeof navigator.wakeLock.request
-    !==
-    "function"
-
-  ) {
-
-    return;
-
-  }
-
-
-  if (
-
-    wakeLock
-
-    &&
-
-    wakeLock.released === false
-
-  ) {
-
-    return;
-
-  }
-
-
-  navigator
-    .wakeLock
-    .request(
-      "screen"
-    )
-
-    .then(
-
-      function (lock) {
-
-        wakeLock =
-          lock;
-
-
-        if (
-
-          wakeLock
-
-          &&
-
-          typeof wakeLock.addEventListener
-          ===
-          "function"
-
-        ) {
-
-          wakeLock
-            .addEventListener(
-
-              "release",
-
-              function () {
-
-                wakeLock =
-                  null;
-
-              }
-
-            );
-
-        }
-
-      }
-
-    )
-
-    .catch(
-      function () {}
-    );
-
-}
-
-
-
-/* =========================================================
-   AUTO REFRESH
-   ========================================================= */
-
-function scheduleAutoRefresh() {
-
-  if (
-
-    !Number.isFinite(
-      AUTO_REFRESH_HOURS
-    )
-
-    ||
-
-    AUTO_REFRESH_HOURS <= 0
-
-  ) {
-
-    return;
-
-  }
-
-
-  window.setTimeout(
-
-    function () {
-
-      window.location.reload();
-
-    },
-
-    AUTO_REFRESH_HOURS
-    *
-    60
-    *
-    60
-    *
-    1000
-
-  );
-
-}
-
-
-
-/* =========================================================
-   START APPLICATION
-   ========================================================= */
-
-function startApp() {
-
-  createBoard();
-
-  fitBoard();
-
-  applyNightDimming();
-
-  playNextScene();
-
-  requestWakeLock();
-
-  showFullscreenHint();
-
-  scheduleAutoRefresh();
-
-
-  /*
-     Re-check whether night mode
-     should be enabled every minute.
-  */
-
-  window.setInterval(
-
-    applyNightDimming,
-
-    60000
-
-  );
-
-
-  /*
-     Tiny board position shift
-     every five minutes.
-  */
-
-  window.setInterval(
-
-    applyPixelShift,
-
-    300000
-
-  );
-
-}
-
-
-
-/* =========================================================
-   EVENTS
-   ========================================================= */
-
-window.addEventListener(
-
-  "resize",
-
-  fitBoard
-
-);
-
-
-window.addEventListener(
-
-  "orientationchange",
-
-  function () {
-
-    window.setTimeout(
-
-      fitBoard,
-
-      150
-
-    );
-
-  }
-
-);
-
-
-document.addEventListener(
-
-  "click",
-
-  enterFullscreen
-
-);
-
-
-document.addEventListener(
-
-  "visibilitychange",
-
-  function () {
+  function tick() {
+    var now = Date.now();
+    var period = C.period(new Date(now).getHours());
+
+    document.body.className =
+      "display" +
+      (period === "night" ? " night" : "");
 
     if (
-      document.visibilityState
-      ===
-      "visible"
+      previousPeriod !== period ||
+      now >= sceneUntil
     ) {
+      activeScene = nextScene(now);
 
-      fitBoard();
-
-      applyNightDimming();
-
-      requestWakeLock();
-
+      sceneUntil =
+        now + activeScene.duration * 1000;
     }
 
+    if (activeScene) {
+      paint(activeScene.text, activeScene.color);
+    }
+
+    previousPeriod = period;
   }
 
-);
+
+  /* ===================================================
+     FULLSCREEN AND OPTIONAL WAKE LOCK
+     =================================================== */
+
+  function requestWake() {
+    if (
+      navigator.wakeLock &&
+      navigator.wakeLock.request &&
+      (!wakeLock || wakeLock.released)
+    ) {
+      navigator.wakeLock.request("screen")
+        .then(function (lock) {
+          wakeLock = lock;
+        })
+        .catch(function () {});
+    }
+  }
+
+  id("start").onclick = function () {
+    try {
+      var AudioAPI =
+        window.AudioContext ||
+        window.webkitAudioContext;
+
+      if (AudioAPI) {
+        audio = audio || new AudioAPI();
+
+        if (audio.resume) {
+          var resumed = audio.resume();
+
+          if (resumed && resumed.catch) {
+            resumed.catch(function () {});
+          }
+        }
+
+        var source = audio.createBufferSource();
+
+        source.buffer = audio.createBuffer(
+          1,
+          1,
+          audio.sampleRate
+        );
+
+        source.connect(audio.destination);
+        source.start(0);
+      }
+
+    } catch (e) {}
+
+    var element = document.documentElement;
+
+    var fullscreen =
+      element.requestFullscreen ||
+      element.webkitRequestFullscreen;
+
+    if (fullscreen) {
+      try {
+        var result = fullscreen.call(element);
+
+        if (result && result.catch) {
+          result.catch(function () {});
+        }
+      } catch (e) {}
+    }
+
+    requestWake();
+
+    id("start").textContent = "Fullscreen / sound";
+
+    status(
+      audio && audio.state !== "suspended"
+        ? "Display ready"
+        : "Display ready · audio may be unavailable"
+    );
+
+    setTimeout(function () {
+      id("toolbar").className =
+        "board-toolbar faded";
+    }, 6000);
+
+    setTimeout(size, 300);
+  };
 
 
+  /* ===================================================
+     SETTINGS CONTROLS
+     =================================================== */
 
-/* =========================================================
-   GO
-   ========================================================= */
+  function reveal() {
+    id("toolbar").className = "board-toolbar";
+  }
 
-startApp();
+  board.onclick = function () {
+    reveal();
+    id("start").click();
+  };
 
+  id("settings-button").onclick = function () {
+    reveal();
+
+    id("settings").className = "settings-overlay";
+    id("close-settings").focus();
+  };
+
+  id("close-settings").onclick = function () {
+    id("settings").className = "hidden";
+    id("settings-button").focus();
+  };
+
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+      id("close-settings").click();
+    }
+  });
+
+  id("sound").checked = settings.sound;
+  id("volume").value = settings.volume;
+  id("pattern").value = settings.pattern;
+
+  function save() {
+    settings.sound = id("sound").checked;
+    settings.volume = Number(id("volume").value);
+    settings.pattern = id("pattern").value;
+
+    try {
+      localStorage.setItem(
+        "mini-board-preferences-v1",
+        JSON.stringify(settings)
+      );
+
+      id("save-status").textContent =
+        "Saved on this device.";
+
+    } catch (e) {
+      id("save-status").textContent =
+        "Applied for now. This browser cannot remember settings.";
+    }
+
+    colorLast = "";
+    tick();
+  }
+
+  id("sound").onchange = save;
+  id("volume").onchange = save;
+  id("pattern").onchange = save;
+
+  id("test-sound").onclick = function () {
+    try {
+      var AudioAPI =
+        window.AudioContext ||
+        window.webkitAudioContext;
+
+      if (!AudioAPI) {
+        id("save-status").textContent =
+          "Audio is unavailable in this browser.";
+        return;
+      }
+
+      audio = audio || new AudioAPI();
+
+      var resumed = audio.resume
+        ? audio.resume()
+        : null;
+
+      function test() {
+        clickSound();
+
+        if (C.period(new Date().getHours()) === "night") {
+          id("save-status").textContent =
+            "Quiet hours: sound stays off until 6 AM.";
+        } else if (settings.sound) {
+          id("save-status").textContent =
+            "Test played. Check the tablet volume if you cannot hear it.";
+        } else {
+          id("save-status").textContent =
+            "Turn on sound to hear a test.";
+        }
+      }
+
+      if (resumed && resumed.then) {
+        resumed.then(test).catch(function () {
+          id("save-status").textContent =
+            "Audio could not start. Tap the display and try again.";
+        });
+      } else {
+        test();
+      }
+
+    } catch (e) {
+      id("save-status").textContent =
+        "Audio is unavailable in this browser.";
+    }
+  };
+
+
+  /* ===================================================
+     RESUME AND ROTATION EVENTS
+     =================================================== */
+
+  document.addEventListener(
+    "visibilitychange",
+    function () {
+      if (!document.hidden) {
+        size();
+        requestWake();
+        tick();
+      }
+    }
+  );
+
+  window.addEventListener(
+    "orientationchange",
+    function () {
+      setTimeout(size, 150);
+    }
+  );
+
+  requestWake();
+  tick();
+
+  setInterval(tick, 1000);
+
+
+  /* Tiny position shift every five minutes. */
+
+  var shift = 0;
+
+  setInterval(function () {
+    var shifts = [
+      [0, 0],
+      [1, 0],
+      [0, 1],
+      [-1, 0],
+      [0, -1]
+    ];
+
+    shift = (shift + 1) % shifts.length;
+
+    board.style.marginLeft =
+      shifts[shift][0] + "px";
+
+    board.style.marginTop =
+      shifts[shift][1] + "px";
+
+  }, 300000);
+
+
+  /* ===================================================
+     OPTIONAL OFFLINE SUPPORT
+     Requires sw.js beside index.html when hosted.
+     =================================================== */
+
+  if (location.protocol === "file:") {
+    id("offline-status").textContent =
+      "Local file: the display works without internet.";
+
+    status("Local display · tap to start");
+
+  } else if (
+    "serviceWorker" in navigator &&
+    (
+      location.protocol === "https:" ||
+      location.hostname === "localhost" ||
+      location.hostname === "127.0.0.1"
+    )
+  ) {
+    navigator.serviceWorker.register("./sw.js")
+      .then(function () {
+        return navigator.serviceWorker.ready;
+      })
+      .then(function () {
+        id("offline-status").textContent =
+          "Offline copy ready. Reopen this same address in this browser.";
+      })
+      .catch(function () {
+        id("offline-status").textContent =
+          "Offline storage is unavailable. The open display still works; save index.html for a local copy.";
+      });
+
+  } else {
+    id("offline-status").textContent =
+      "Offline caching is not available here. A saved index.html works as a local file where your browser allows it.";
+  }
+
+}());
 </script>
 
 </body>
-
 </html>
