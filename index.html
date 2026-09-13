@@ -1,0 +1,3254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+>
+
+<meta
+  name="theme-color"
+  content="#080808"
+>
+
+<title>Mini Vestaboard</title>
+
+
+<style>
+
+:root {
+
+  --board-bg: #080808;
+
+  --tile-top: #242424;
+
+  --tile-bottom: #171717;
+
+  --tile-text: #f1f0e9;
+
+  --gap: clamp(2px, 0.34vw, 6px);
+
+  --radius: clamp(2px, 0.30vw, 5px);
+
+}
+
+
+* {
+
+  box-sizing: border-box;
+
+}
+
+
+html,
+body {
+
+  width: 100%;
+
+  height: 100%;
+
+  margin: 0;
+
+  overflow: hidden;
+
+  background: var(--board-bg);
+
+  overscroll-behavior: none;
+
+  touch-action: manipulation;
+
+  -webkit-user-select: none;
+
+  user-select: none;
+
+}
+
+
+body {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+}
+
+
+#board-wrapper {
+
+  width: 100vw;
+
+  height: 100vh;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding:
+    2vh
+    1.5vw;
+
+  background:
+
+    radial-gradient(
+
+      circle at center,
+
+      #191919 0%,
+
+      #080808 76%
+
+    );
+
+}
+
+
+#board {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      22,
+      minmax(0, 1fr)
+    );
+
+  grid-template-rows:
+    repeat(
+      6,
+      minmax(0, 1fr)
+    );
+
+  gap:
+    var(--gap);
+
+}
+
+
+.tile {
+
+  position: relative;
+
+  min-width: 0;
+
+  min-height: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  overflow: hidden;
+
+  border-radius:
+    var(--radius);
+
+  background:
+
+    linear-gradient(
+
+      to bottom,
+
+      var(--tile-top) 0%,
+
+      #1c1c1c 48%,
+
+      #0c0c0c 49%,
+
+      #0c0c0c 51%,
+
+      #1a1a1a 52%,
+
+      var(--tile-bottom) 100%
+
+    );
+
+  box-shadow:
+
+    inset
+    0
+    1px
+    0
+    rgba(255,255,255,0.08),
+
+    inset
+    0
+    -2px
+    4px
+    rgba(0,0,0,0.9),
+
+    0
+    2px
+    3px
+    rgba(0,0,0,0.72);
+
+  color:
+    var(--tile-text);
+
+  font-family:
+
+    "Arial Narrow",
+
+    "Roboto Condensed",
+
+    Arial,
+
+    Helvetica,
+
+    sans-serif;
+
+  font-size:
+    clamp(
+      12px,
+      2.75vw,
+      34px
+    );
+
+  font-weight:
+    700;
+
+  line-height:
+    1;
+
+  text-align:
+    center;
+
+  text-shadow:
+
+    0
+    1px
+    2px
+    rgba(0,0,0,0.9);
+
+  transform:
+    translateZ(0);
+
+}
+
+
+.tile::after {
+
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+
+  right: 0;
+
+  top: 50%;
+
+  height: 1px;
+
+  background:
+    rgba(
+      0,
+      0,
+      0,
+      0.96
+    );
+
+  box-shadow:
+
+    0
+    1px
+    0
+    rgba(
+      255,
+      255,
+      255,
+      0.04
+    );
+
+  pointer-events:
+    none;
+
+}
+
+
+.tile::before {
+
+  content: "";
+
+  position: absolute;
+
+  left: 4%;
+
+  right: 4%;
+
+  top:
+    calc(
+      50% - 1px
+    );
+
+  height: 3px;
+
+  border-left:
+
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      0.06
+    );
+
+  border-right:
+
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      0.06
+    );
+
+  pointer-events:
+    none;
+
+}
+
+
+.character {
+
+  position: relative;
+
+  z-index: 2;
+
+  transform:
+    translateY(-1%);
+
+}
+
+
+.flipping {
+
+  animation:
+
+    tileFlip
+
+    96ms
+
+    linear;
+
+}
+
+
+@keyframes tileFlip {
+
+  0% {
+
+    transform:
+
+      perspective(160px)
+
+      rotateX(0deg);
+
+    filter:
+      brightness(1);
+
+  }
+
+
+  50% {
+
+    transform:
+
+      perspective(160px)
+
+      rotateX(-58deg);
+
+    filter:
+      brightness(0.55);
+
+  }
+
+
+  100% {
+
+    transform:
+
+      perspective(160px)
+
+      rotateX(0deg);
+
+    filter:
+      brightness(1);
+
+  }
+
+}
+
+
+/* COLORED TILES */
+
+.tile.color-red {
+
+  background:
+    #b9413c
+    !important;
+
+}
+
+
+.tile.color-orange {
+
+  background:
+    #d46f31
+    !important;
+
+}
+
+
+.tile.color-yellow {
+
+  background:
+    #d6b43d
+    !important;
+
+}
+
+
+.tile.color-green {
+
+  background:
+    #4f8c56
+    !important;
+
+}
+
+
+.tile.color-blue {
+
+  background:
+    #3d79a5
+    !important;
+
+}
+
+
+.tile.color-purple {
+
+  background:
+    #73599a
+    !important;
+
+}
+
+
+.tile.color-white {
+
+  background:
+    #d9d6cb
+    !important;
+
+}
+
+
+.tile.color-red .character,
+.tile.color-orange .character,
+.tile.color-yellow .character,
+.tile.color-green .character,
+.tile.color-blue .character,
+.tile.color-purple .character,
+.tile.color-white .character {
+
+  color:
+    transparent;
+
+  text-shadow:
+    none;
+
+}
+
+
+/* FULLSCREEN HINT */
+
+#tap-hint {
+
+  position: fixed;
+
+  left: 50%;
+
+  bottom:
+
+    max(
+      10px,
+      env(
+        safe-area-inset-bottom
+      )
+    );
+
+  transform:
+    translateX(-50%);
+
+  z-index:
+    10;
+
+  padding:
+    6px
+    10px;
+
+  border-radius:
+    999px;
+
+  background:
+    rgba(
+      0,
+      0,
+      0,
+      0.54
+    );
+
+  color:
+    rgba(
+      255,
+      255,
+      255,
+      0.66
+    );
+
+  font:
+
+    12px/1
+
+    Arial,
+
+    Helvetica,
+
+    sans-serif;
+
+  opacity:
+    0;
+
+  pointer-events:
+    none;
+
+  transition:
+    opacity
+    180ms
+    ease;
+
+}
+
+
+#tap-hint.show {
+
+  opacity:
+    1;
+
+}
+
+
+@media
+(prefers-reduced-motion: reduce) {
+
+  .flipping {
+
+    animation:
+      none;
+
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div id="board-wrapper">
+
+  <div
+    id="board"
+    aria-label="Mini split-flap display"
+  ></div>
+
+</div>
+
+
+<div id="tap-hint">
+
+  Tap once for fullscreen
+
+</div>
+
+
+
+<script>
+
+"use strict";
+
+
+/* =========================================================
+
+   MINI VESTABOARD
+   FIRE HD 8 EDITION
+
+   22 COLUMNS
+   6 ROWS
+
+   22 × 6 = 132 TILES
+
+   ========================================================= */
+
+
+const ROWS =
+  6;
+
+
+const COLUMNS =
+  22;
+
+
+const TILE_COUNT =
+  ROWS * COLUMNS;
+
+
+
+/*
+   Board shape.
+
+   The Fire HD 8 screen is wider than
+   a traditional picture frame.
+
+   This keeps our board proportions
+   looking more like a real split-flap
+   display.
+*/
+
+const BOARD_ASPECT =
+  1.87;
+
+
+
+/*
+   Animation settings.
+*/
+
+const FLIP_SPEED_MS =
+  62;
+
+
+const MIN_FLIPS =
+  3;
+
+
+const EXTRA_FLIPS =
+  4;
+
+
+const FLIP_CHARACTERS =
+
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!?$#@&+-";
+
+
+
+/*
+   Show:
+
+   "Tap once for fullscreen"
+
+   for a few seconds when the
+   page starts.
+*/
+
+const SHOW_FULLSCREEN_HINT =
+  true;
+
+
+
+/* =========================================================
+
+   YOUR SCREENS
+
+   THIS IS THE SECTION YOU WILL
+   EDIT MOST OFTEN.
+
+   Each screen can contain:
+
+   duration
+   lines
+   colored tiles
+
+   Maximum:
+
+   6 rows
+   22 characters per row
+
+   Text automatically centers.
+
+   ========================================================= */
+
+
+const scenes = [
+
+
+  /* SCREEN 1 */
+
+  {
+
+    duration:
+      14,
+
+
+    lines: [
+
+      "",
+
+      "GOOD MORNING",
+
+      "",
+
+      "HAVE A GREAT DAY",
+
+      "",
+
+      ""
+
+    ]
+
+  },
+
+
+
+  /* SCREEN 2 */
+
+  {
+
+    duration:
+      12,
+
+
+    lines: [
+
+      "",
+
+      "",
+
+      "WELCOME HOME",
+
+      "",
+
+      "",
+
+      ""
+
+    ],
+
+
+    /*
+       Colored corners.
+
+       Row numbers:
+       0 through 5
+
+       Column numbers:
+       0 through 21
+    */
+
+    colors: [
+
+      {
+        row: 0,
+        col: 0,
+        color: "yellow"
+      },
+
+      {
+        row: 0,
+        col: 21,
+        color: "yellow"
+      },
+
+      {
+        row: 5,
+        col: 0,
+        color: "yellow"
+      },
+
+      {
+        row: 5,
+        col: 21,
+        color: "yellow"
+      }
+
+    ]
+
+  },
+
+
+
+  /* SCREEN 3 */
+
+  {
+
+    duration:
+      12,
+
+
+    lines: [
+
+      "",
+
+      "MAKE TODAY",
+
+      "",
+
+      "COUNT",
+
+      "",
+
+      ""
+
+    ]
+
+  },
+
+
+
+  /*
+     SCREEN 4
+
+     Automatically displays
+     the current:
+
+     DAY
+     DATE
+     TIME
+  */
+
+  {
+
+    duration:
+      12,
+
+
+    dynamic:
+      buildDateTimeScene
+
+  }
+
+
+];
+
+
+
+/* =========================================================
+
+   OPTIONAL DAILY SCHEDULING
+
+   DEFAULT:
+
+   false
+
+   Leave this false for now.
+
+   When false, the board rotates
+   normally through the screens above.
+
+   ========================================================= */
+
+
+const ENABLE_SCHEDULE =
+  false;
+
+
+
+/*
+   Later you can change:
+
+   false
+
+   to:
+
+   true
+
+   and the board can select screens
+   depending on the time of day.
+
+   Times use 24-hour format.
+*/
+
+
+const schedule = [
+
+
+  {
+
+    start:
+      "06:00",
+
+    end:
+      "11:59",
+
+    scene:
+      0
+
+  },
+
+
+  {
+
+    start:
+      "17:00",
+
+    end:
+      "23:59",
+
+    scene:
+      1
+
+  }
+
+
+];
+
+
+
+/* =========================================================
+
+   AVAILABLE TILE COLORS
+
+   ========================================================= */
+
+
+const VALID_COLORS =
+
+  new Set([
+
+    "red",
+
+    "orange",
+
+    "yellow",
+
+    "green",
+
+    "blue",
+
+    "purple",
+
+    "white"
+
+  ]);
+
+
+
+const COLOR_CLASSES =
+
+  Array
+    .from(
+      VALID_COLORS
+    )
+    .map(
+
+      function (color) {
+
+        return (
+          "color-"
+          +
+          color
+        );
+
+      }
+
+    );
+
+
+
+/* =========================================================
+
+   INTERNAL VARIABLES
+
+   You normally do NOT need
+   to edit anything below here.
+
+   ========================================================= */
+
+
+const board =
+
+  document
+    .getElementById(
+      "board"
+    );
+
+
+
+const tapHint =
+
+  document
+    .getElementById(
+      "tap-hint"
+    );
+
+
+
+const tiles =
+  [];
+
+
+
+let playlistIndex =
+  0;
+
+
+
+let sceneTimer =
+  null;
+
+
+
+let animationGeneration =
+  0;
+
+
+
+let wakeLock =
+  null;
+
+
+
+let hintTimer =
+  null;
+
+
+
+/* =========================================================
+
+   CREATE 132 TILES
+
+   ========================================================= */
+
+
+function createBoard() {
+
+
+  const fragment =
+
+    document
+      .createDocumentFragment();
+
+
+  for (
+
+    let i = 0;
+
+    i < TILE_COUNT;
+
+    i++
+
+  ) {
+
+
+    const tile =
+
+      document
+        .createElement(
+          "div"
+        );
+
+
+    tile.className =
+      "tile";
+
+
+
+    const character =
+
+      document
+        .createElement(
+          "span"
+        );
+
+
+    character.className =
+      "character";
+
+
+    character.textContent =
+      " ";
+
+
+
+    tile.appendChild(
+      character
+    );
+
+
+    fragment.appendChild(
+      tile
+    );
+
+
+
+    tiles.push({
+
+      tile:
+        tile,
+
+      character:
+        character
+
+    });
+
+
+  }
+
+
+
+  board.appendChild(
+    fragment
+  );
+
+
+}
+
+
+
+/* =========================================================
+
+   FIT BOARD TO SCREEN
+
+   ========================================================= */
+
+
+function fitBoard() {
+
+
+  const maxWidth =
+
+    Math.max(
+
+      1,
+
+      window.innerWidth
+      *
+      0.96
+
+    );
+
+
+
+  const maxHeight =
+
+    Math.max(
+
+      1,
+
+      window.innerHeight
+      *
+      0.92
+
+    );
+
+
+
+  let width =
+    maxWidth;
+
+
+
+  let height =
+
+    width
+    /
+    BOARD_ASPECT;
+
+
+
+  if (
+    height > maxHeight
+  ) {
+
+
+    height =
+      maxHeight;
+
+
+    width =
+
+      height
+      *
+      BOARD_ASPECT;
+
+
+  }
+
+
+
+  board.style.width =
+
+    Math.floor(
+      width
+    )
+    +
+    "px";
+
+
+
+  board.style.height =
+
+    Math.floor(
+      height
+    )
+    +
+    "px";
+
+
+}
+
+
+
+/* =========================================================
+
+   CLEAN UP TEXT
+
+   ========================================================= */
+
+
+function normalizeText(
+  value
+) {
+
+
+  return String(
+
+    value == null
+      ?
+      ""
+      :
+      value
+
+  )
+
+    .replace(
+
+      /[\u2018\u2019]/g,
+
+      "'"
+
+    )
+
+    .replace(
+
+      /[\u201C\u201D]/g,
+
+      '"'
+
+    )
+
+    .toUpperCase()
+
+    .slice(
+
+      0,
+
+      COLUMNS
+
+    );
+
+
+}
+
+
+
+/* =========================================================
+
+   CENTER ONE LINE
+
+   ========================================================= */
+
+
+function centerText(
+  value
+) {
+
+
+  const text =
+
+    normalizeText(
+      value
+    );
+
+
+
+  const remaining =
+
+    COLUMNS
+    -
+    text.length;
+
+
+
+  const left =
+
+    Math.floor(
+
+      remaining
+      /
+      2
+
+    );
+
+
+
+  const right =
+
+    remaining
+    -
+    left;
+
+
+
+  return (
+
+    " ".repeat(
+      left
+    )
+
+    +
+
+    text
+
+    +
+
+    " ".repeat(
+      right
+    )
+
+  );
+
+
+}
+
+
+
+/* =========================================================
+
+   TURN 6 LINES INTO 132 POSITIONS
+
+   ========================================================= */
+
+
+function formatLines(
+  lines
+) {
+
+
+  const output =
+    [];
+
+
+
+  for (
+
+    let row = 0;
+
+    row < ROWS;
+
+    row++
+
+  ) {
+
+
+    let currentLine =
+      "";
+
+
+
+    if (
+
+      lines
+
+      &&
+
+      lines[row] != null
+
+    ) {
+
+
+      currentLine =
+        lines[row];
+
+
+    }
+
+
+
+    const centered =
+
+      centerText(
+        currentLine
+      );
+
+
+
+    const characters =
+
+      centered.split(
+        ""
+      );
+
+
+
+    for (
+
+      let i = 0;
+
+      i < characters.length;
+
+      i++
+
+    ) {
+
+
+      output.push(
+        characters[i]
+      );
+
+
+    }
+
+
+  }
+
+
+
+  /*
+     Safety check.
+
+     Every valid screen must
+     always contain exactly
+     132 positions.
+  */
+
+  if (
+
+    output.length
+    !==
+    TILE_COUNT
+
+  ) {
+
+
+    throw new Error(
+
+      "Internal formatting error. "
+
+      +
+
+      "Expected "
+
+      +
+
+      TILE_COUNT
+
+      +
+
+      " tiles but received "
+
+      +
+
+      output.length
+
+      +
+
+      "."
+
+    );
+
+
+  }
+
+
+
+  return output;
+
+
+}
+
+
+
+/* =========================================================
+
+   LIVE DATE + TIME SCREEN
+
+   ========================================================= */
+
+
+function buildDateTimeScene() {
+
+
+  const now =
+    new Date();
+
+
+
+  const weekday =
+
+    new Intl.DateTimeFormat(
+
+      "en-US",
+
+      {
+
+        weekday:
+          "long"
+
+      }
+
+    )
+      .format(
+        now
+      );
+
+
+
+  const date =
+
+    new Intl.DateTimeFormat(
+
+      "en-US",
+
+      {
+
+        month:
+          "long",
+
+        day:
+          "numeric"
+
+      }
+
+    )
+      .format(
+        now
+      );
+
+
+
+  const time =
+
+    new Intl.DateTimeFormat(
+
+      "en-US",
+
+      {
+
+        hour:
+          "numeric",
+
+        minute:
+          "2-digit"
+
+      }
+
+    )
+      .format(
+        now
+      );
+
+
+
+  return [
+
+    "",
+
+    weekday,
+
+    date,
+
+    "",
+
+    time,
+
+    ""
+
+  ];
+
+
+}
+
+
+
+/* =========================================================
+
+   CLEAR COLOR TILES
+
+   ========================================================= */
+
+
+function clearColors() {
+
+
+  for (
+
+    let i = 0;
+
+    i < tiles.length;
+
+    i++
+
+  ) {
+
+
+    tiles[i]
+      .tile
+      .classList
+      .remove
+      .apply(
+
+        tiles[i].tile.classList,
+
+        COLOR_CLASSES
+
+      );
+
+
+  }
+
+
+}
+
+
+
+/* =========================================================
+
+   APPLY COLOR TILES
+
+   ========================================================= */
+
+
+function applyColors(
+  colors
+) {
+
+
+  clearColors();
+
+
+
+  if (
+    !Array.isArray(
+      colors
+    )
+  ) {
+
+    return;
+
+  }
+
+
+
+  for (
+
+    let i = 0;
+
+    i < colors.length;
+
+    i++
+
+  ) {
+
+
+    const entry =
+      colors[i];
+
+
+
+    const row =
+
+      Number(
+
+        entry
+        &&
+        entry.row
+
+      );
+
+
+
+    const col =
+
+      Number(
+
+        entry
+        &&
+        entry.col
+
+      );
+
+
+
+    const color =
+
+      String(
+
+        (
+          entry
+          &&
+          entry.color
+        )
+
+        ||
+
+        ""
+
+      )
+        .toLowerCase();
+
+
+
+    if (
+
+      !Number.isInteger(
+        row
+      )
+
+      ||
+
+      !Number.isInteger(
+        col
+      )
+
+    ) {
+
+      continue;
+
+    }
+
+
+
+    if (
+
+      row < 0
+
+      ||
+
+      row >= ROWS
+
+      ||
+
+      col < 0
+
+      ||
+
+      col >= COLUMNS
+
+    ) {
+
+      continue;
+
+    }
+
+
+
+    if (
+
+      !VALID_COLORS.has(
+        color
+      )
+
+    ) {
+
+      continue;
+
+    }
+
+
+
+    const index =
+
+      row
+      *
+      COLUMNS
+      +
+      col;
+
+
+
+    tiles[index]
+      .tile
+      .classList
+      .add(
+
+        "color-"
+        +
+        color
+
+      );
+
+
+  }
+
+
+}
+
+
+
+/* =========================================================
+
+   RANDOM FLIPPING CHARACTER
+
+   ========================================================= */
+
+
+function randomFlipCharacter() {
+
+
+  const position =
+
+    Math.floor(
+
+      Math.random()
+
+      *
+
+      FLIP_CHARACTERS.length
+
+    );
+
+
+
+  return (
+
+    FLIP_CHARACTERS[
+      position
+    ]
+
+  );
+
+
+}
+
+
+
+/* =========================================================
+
+   ANIMATE ONE TILE
+
+   ========================================================= */
+
+
+function animateTile(
+
+  index,
+
+  finalCharacter,
+
+  delay,
+
+  generation
+
+) {
+
+
+  const item =
+    tiles[index];
+
+
+
+  if (
+    !item
+  ) {
+
+    return;
+
+  }
+
+
+
+  /*
+     If this tile already displays
+     the correct character,
+     don't wastefully animate it.
+  */
+
+  if (
+
+    item
+      .character
+      .textContent
+
+    ===
+
+    finalCharacter
+
+  ) {
+
+    return;
+
+  }
+
+
+
+  window.setTimeout(
+
+    function () {
+
+
+      /*
+         Stop old animations if
+         a newer screen started.
+      */
+
+      if (
+
+        generation
+
+        !==
+
+        animationGeneration
+
+      ) {
+
+        return;
+
+      }
+
+
+
+      const totalFlips =
+
+        MIN_FLIPS
+
+        +
+
+        Math.floor(
+
+          Math.random()
+
+          *
+
+          (
+            EXTRA_FLIPS
+            +
+            1
+          )
+
+        );
+
+
+
+      let flipCount =
+        0;
+
+
+
+      const interval =
+
+        window.setInterval(
+
+          function () {
+
+
+            if (
+
+              generation
+
+              !==
+
+              animationGeneration
+
+            ) {
+
+
+              window.clearInterval(
+                interval
+              );
+
+
+              return;
+
+
+            }
+
+
+
+            item
+              .tile
+              .classList
+              .remove(
+                "flipping"
+              );
+
+
+
+            /*
+               Forces browser to restart
+               the animation.
+            */
+
+            void item
+              .tile
+              .offsetWidth;
+
+
+
+            item
+              .tile
+              .classList
+              .add(
+                "flipping"
+              );
+
+
+
+            flipCount++;
+
+
+
+            if (
+
+              flipCount
+              >=
+              totalFlips
+
+            ) {
+
+
+              window.clearInterval(
+                interval
+              );
+
+
+
+              item
+                .character
+                .textContent =
+
+                  finalCharacter;
+
+
+
+              item
+                .tile
+                .classList
+                .remove(
+                  "flipping"
+                );
+
+
+
+              return;
+
+
+            }
+
+
+
+            item
+              .character
+              .textContent =
+
+                randomFlipCharacter();
+
+
+
+          },
+
+          FLIP_SPEED_MS
+
+        );
+
+
+    },
+
+    delay
+
+  );
+
+
+}
+
+
+
+/* =========================================================
+
+   GET SCREEN CONTENT
+
+   ========================================================= */
+
+
+function resolveSceneLines(
+  scene
+) {
+
+
+  if (
+
+    scene
+
+    &&
+
+    typeof scene.dynamic
+    ===
+    "function"
+
+  ) {
+
+
+    const result =
+
+      scene.dynamic();
+
+
+
+    if (
+      Array.isArray(
+        result
+      )
+    ) {
+
+      return result;
+
+    }
+
+
+
+    return [];
+
+
+  }
+
+
+
+  if (
+
+    scene
+
+    &&
+
+    Array.isArray(
+      scene.lines
+    )
+
+  ) {
+
+
+    return scene.lines;
+
+
+  }
+
+
+
+  return [];
+
+
+}
+
+
+
+/* =========================================================
+
+   DISPLAY ONE SCREEN
+
+   ========================================================= */
+
+
+function displayScene(
+  scene
+) {
+
+
+  if (
+    !scene
+  ) {
+
+    return;
+
+  }
+
+
+
+  animationGeneration++;
+
+
+
+  const generation =
+    animationGeneration;
+
+
+
+  const formatted =
+
+    formatLines(
+
+      resolveSceneLines(
+        scene
+      )
+
+    );
+
+
+
+  applyColors(
+    scene.colors
+  );
+
+
+
+  for (
+
+    let index = 0;
+
+    index < formatted.length;
+
+    index++
+
+  ) {
+
+
+    const character =
+      formatted[index];
+
+
+
+    const row =
+
+      Math.floor(
+
+        index
+        /
+        COLUMNS
+
+      );
+
+
+
+    const col =
+
+      index
+      %
+      COLUMNS;
+
+
+
+    /*
+       Slightly stagger each tile
+       to create the mechanical
+       ripple effect.
+    */
+
+    const delay =
+
+      col * 11
+
+      +
+
+      row * 33
+
+      +
+
+      Math.random() * 70;
+
+
+
+    animateTile(
+
+      index,
+
+      character,
+
+      delay,
+
+      generation
+
+    );
+
+
+  }
+
+
+}
+
+
+
+/* =========================================================
+
+   CONVERT 24-HOUR TIME TO MINUTES
+
+   ========================================================= */
+
+
+function minutesFromTimeString(
+  timeString
+) {
+
+
+  const value =
+
+    String(
+
+      timeString == null
+        ?
+        ""
+        :
+        timeString
+
+    );
+
+
+
+  const match =
+
+    /^(\d{2}):(\d{2})$/
+      .exec(
+        value
+      );
+
+
+
+  if (
+    !match
+  ) {
+
+    return null;
+
+  }
+
+
+
+  const hour =
+
+    Number(
+      match[1]
+    );
+
+
+
+  const minute =
+
+    Number(
+      match[2]
+    );
+
+
+
+  if (
+
+    hour < 0
+
+    ||
+
+    hour > 23
+
+    ||
+
+    minute < 0
+
+    ||
+
+    minute > 59
+
+  ) {
+
+    return null;
+
+  }
+
+
+
+  return (
+
+    hour * 60
+
+    +
+
+    minute
+
+  );
+
+
+}
+
+
+
+/* =========================================================
+
+   CHECK DAILY SCHEDULE
+
+   ========================================================= */
+
+
+function getScheduledSceneIndex() {
+
+
+  if (
+    !ENABLE_SCHEDULE
+  ) {
+
+    return null;
+
+  }
+
+
+
+  const now =
+    new Date();
+
+
+
+  const current =
+
+    now.getHours() * 60
+
+    +
+
+    now.getMinutes();
+
+
+
+  for (
+
+    let i = 0;
+
+    i < schedule.length;
+
+    i++
+
+  ) {
+
+
+    const rule =
+      schedule[i];
+
+
+
+    const start =
+
+      minutesFromTimeString(
+        rule.start
+      );
+
+
+
+    const end =
+
+      minutesFromTimeString(
+        rule.end
+      );
+
+
+
+    const sceneIndex =
+
+      Number(
+        rule.scene
+      );
+
+
+
+    if (
+
+      start === null
+
+      ||
+
+      end === null
+
+    ) {
+
+      continue;
+
+    }
+
+
+
+    if (
+
+      !Number.isInteger(
+        sceneIndex
+      )
+
+      ||
+
+      !scenes[
+        sceneIndex
+      ]
+
+    ) {
+
+      continue;
+
+    }
+
+
+
+    let matches =
+      false;
+
+
+
+    /*
+       Normal window:
+
+       06:00 → 11:59
+    */
+
+    if (
+      start <= end
+    ) {
+
+
+      matches =
+
+        current >= start
+
+        &&
+
+        current <= end;
+
+
+    }
+
+
+    /*
+       Overnight window:
+
+       22:00 → 06:00
+    */
+
+    else {
+
+
+      matches =
+
+        current >= start
+
+        ||
+
+        current <= end;
+
+
+    }
+
+
+
+    if (
+      matches
+    ) {
+
+      return sceneIndex;
+
+    }
+
+
+  }
+
+
+
+  return null;
+
+
+}
+
+
+
+/* =========================================================
+
+   PLAY NEXT SCREEN
+
+   ========================================================= */
+
+
+function playNextScene() {
+
+
+  if (
+    sceneTimer !== null
+  ) {
+
+
+    window.clearTimeout(
+      sceneTimer
+    );
+
+
+    sceneTimer =
+      null;
+
+
+  }
+
+
+
+  if (
+    scenes.length === 0
+  ) {
+
+    return;
+
+  }
+
+
+
+  const scheduledIndex =
+
+    getScheduledSceneIndex();
+
+
+
+  let scene;
+
+
+
+  if (
+    scheduledIndex !== null
+  ) {
+
+
+    scene =
+
+      scenes[
+        scheduledIndex
+      ];
+
+
+  }
+
+
+  else {
+
+
+    scene =
+
+      scenes[
+        playlistIndex
+      ];
+
+
+
+    playlistIndex =
+
+      (
+        playlistIndex
+        +
+        1
+      )
+
+      %
+
+      scenes.length;
+
+
+  }
+
+
+
+  displayScene(
+    scene
+  );
+
+
+
+  let durationSeconds =
+
+    Number(
+      scene.duration
+    );
+
+
+
+  if (
+
+    !Number.isFinite(
+      durationSeconds
+    )
+
+    ||
+
+    durationSeconds < 2
+
+  ) {
+
+
+    durationSeconds =
+      12;
+
+
+  }
+
+
+
+  sceneTimer =
+
+    window.setTimeout(
+
+      playNextScene,
+
+      durationSeconds
+      *
+      1000
+
+    );
+
+
+}
+
+
+
+/* =========================================================
+
+   FULLSCREEN
+
+   ========================================================= */
+
+
+function enterFullscreen() {
+
+
+  const element =
+
+    document
+      .documentElement;
+
+
+
+  /*
+     Already fullscreen.
+  */
+
+  if (
+    document.fullscreenElement
+  ) {
+
+    return;
+
+  }
+
+
+
+  /*
+     Standard fullscreen API.
+  */
+
+  if (
+
+    typeof element.requestFullscreen
+
+    ===
+
+    "function"
+
+  ) {
+
+
+    try {
+
+
+      const result =
+
+        element.requestFullscreen();
+
+
+
+      if (
+
+        result
+
+        &&
+
+        typeof result.then
+        ===
+        "function"
+
+      ) {
+
+
+        result.then(
+
+          function () {
+
+            hideFullscreenHint();
+
+          }
+
+        )
+        .catch(
+
+          function () {
+
+            /*
+               Fullscreen is optional.
+            */
+
+          }
+
+        );
+
+
+      }
+
+
+      else {
+
+
+        hideFullscreenHint();
+
+
+      }
+
+
+    }
+
+
+    catch (error) {
+
+
+      /*
+         Ignore fullscreen errors.
+      */
+
+
+    }
+
+
+
+    return;
+
+
+  }
+
+
+
+  /*
+     WebKit fallback.
+
+     Helpful for some versions
+     of Silk/WebKit browsers.
+  */
+
+  if (
+
+    typeof element.webkitRequestFullscreen
+
+    ===
+
+    "function"
+
+  ) {
+
+
+    try {
+
+
+      element
+        .webkitRequestFullscreen();
+
+
+      hideFullscreenHint();
+
+
+    }
+
+
+    catch (error) {
+
+
+      /*
+         Display continues normally.
+      */
+
+
+    }
+
+
+  }
+
+
+}
+
+
+
+/* =========================================================
+
+   FULLSCREEN HINT
+
+   ========================================================= */
+
+
+function showFullscreenHint() {
+
+
+  if (
+
+    !SHOW_FULLSCREEN_HINT
+
+    ||
+
+    !tapHint
+
+  ) {
+
+    return;
+
+  }
+
+
+
+  tapHint
+    .classList
+    .add(
+      "show"
+    );
+
+
+
+  window.clearTimeout(
+    hintTimer
+  );
+
+
+
+  hintTimer =
+
+    window.setTimeout(
+
+      hideFullscreenHint,
+
+      4500
+
+    );
+
+
+}
+
+
+
+function hideFullscreenHint() {
+
+
+  if (
+    !tapHint
+  ) {
+
+    return;
+
+  }
+
+
+
+  tapHint
+    .classList
+    .remove(
+      "show"
+    );
+
+
+
+  window.clearTimeout(
+    hintTimer
+  );
+
+
+}
+
+
+
+/* =========================================================
+
+   WAKE LOCK
+
+   Keeps display awake if browser
+   supports this feature.
+
+   If Silk doesn't support it,
+   nothing else breaks.
+
+   ========================================================= */
+
+
+function requestWakeLock() {
+
+
+  if (
+
+    !navigator
+
+    ||
+
+    !navigator.wakeLock
+
+    ||
+
+    typeof navigator.wakeLock.request
+    !==
+    "function"
+
+  ) {
+
+    return;
+
+  }
+
+
+
+  if (
+
+    wakeLock
+
+    &&
+
+    wakeLock.released === false
+
+  ) {
+
+    return;
+
+  }
+
+
+
+  navigator
+    .wakeLock
+    .request(
+      "screen"
+    )
+
+    .then(
+
+      function (lock) {
+
+
+        wakeLock =
+          lock;
+
+
+
+        if (
+
+          wakeLock
+
+          &&
+
+          typeof wakeLock.addEventListener
+          ===
+          "function"
+
+        ) {
+
+
+          wakeLock
+            .addEventListener(
+
+              "release",
+
+              function () {
+
+                wakeLock =
+                  null;
+
+              }
+
+            );
+
+
+        }
+
+
+      }
+
+    )
+
+    .catch(
+
+      function () {
+
+
+        /*
+           Optional feature.
+
+           The board continues
+           normally if unavailable.
+        */
+
+
+      }
+
+    );
+
+
+}
+
+
+
+/* =========================================================
+
+   START APP
+
+   ========================================================= */
+
+
+function startApp() {
+
+
+  createBoard();
+
+
+  fitBoard();
+
+
+  playNextScene();
+
+
+  requestWakeLock();
+
+
+  showFullscreenHint();
+
+
+}
+
+
+
+/* =========================================================
+
+   WINDOW RESIZE
+
+   ========================================================= */
+
+
+window.addEventListener(
+
+  "resize",
+
+  function () {
+
+    fitBoard();
+
+  }
+
+);
+
+
+
+/* =========================================================
+
+   SCREEN ROTATION
+
+   ========================================================= */
+
+
+window.addEventListener(
+
+  "orientationchange",
+
+  function () {
+
+
+    window.setTimeout(
+
+      function () {
+
+        fitBoard();
+
+      },
+
+      150
+
+    );
+
+
+  }
+
+);
+
+
+
+/* =========================================================
+
+   TAP SCREEN FOR FULLSCREEN
+
+   ========================================================= */
+
+
+document.addEventListener(
+
+  "click",
+
+  function () {
+
+    enterFullscreen();
+
+  }
+
+);
+
+
+
+/* =========================================================
+
+   WHEN RETURNING TO PAGE
+
+   ========================================================= */
+
+
+document.addEventListener(
+
+  "visibilitychange",
+
+  function () {
+
+
+    if (
+
+      document.visibilityState
+
+      ===
+
+      "visible"
+
+    ) {
+
+
+      fitBoard();
+
+
+      requestWakeLock();
+
+
+    }
+
+
+  }
+
+);
+
+
+
+/* =========================================================
+
+   GO
+
+   ========================================================= */
+
+
+startApp();
+
+
+</script>
+
+
+</body>
+
+</html>
